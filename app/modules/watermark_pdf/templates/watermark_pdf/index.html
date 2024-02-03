@@ -1,0 +1,255 @@
+{% extends 'base_template-v2.html' %}
+
+{% block title %}Welcome - Watermark Your PDF Files{% endblock %}
+
+{% block header %}Welcome{% endblock %}
+{% block header_text %}{% endblock %}
+
+{% block content %}
+<form method="post" id="file-uploader__form" class="file-uploader-hidden"
+    action="{{ url_for('watermark_pdf.download_watermarked_pdf') }}" enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-sm-6">
+            <!--Upload PDF Card -->
+            <div class="card">
+                <h5 class="card-header">PDF File</h5>
+                <div class="card-img-top" id="card-watermark-pdf-file">
+                    <!-- <img src="..." class="card-img-top" alt="..."> -->
+                    <svg name="svg-watermark-pdf-file" id="svg-watermark-pdf-file" class="bd-placeholder-img"
+                        width="100%" height="180" xmlns="http://www.w3.org/2000/svg" role="img"
+                        aria-label="Placeholder: Image cap" preserveAspectRatio="xMidYMid slice" focusable="false">
+                        <title>Upload your PDF File</title>
+                        <rect width="100%" height="100%" fill="#868e96"></rect>
+                        <text x="50%" y="50%" fill="#dee2e6" dy=".3em"></text>
+                    </svg>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Upload your PDF file</h5>
+                    <p class="card-text" id="card-text-watermark-pdf-file"></p>
+                    <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+                    <input type="file" class="file-chooser__input" name="watermark-pdf-file" id="watermark-pdf-file">
+                </div>
+            </div>
+            <!--Upload PDF Card : End-->
+        </div>
+        <div class="col-sm-6">
+            <!--Upload Watermark Image -->
+            <div class="card">
+                <h5 class="card-header">Watermark Image</h5>
+                <div class="card-img-top" id="card-watermark-image-file">
+                    <!-- <img src="..." class="card-img-top" alt="..."> -->
+                    <svg name="svg-watermark-image-file" id="svg-watermark-image-file" class="bd-placeholder-img"
+                        width="100%" height="180" xmlns="http://www.w3.org/2000/svg" role="img"
+                        aria-label="Placeholder: Image cap" preserveAspectRatio="xMidYMid slice" focusable="false">
+                        <title>Upload your Watermark Image File</title>
+                        <rect width="100%" height="100%" fill="#868e96"></rect>
+                        <text x="50%" y="50%" fill="#dee2e6" dy=".3em"></text>
+                    </svg>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Upload your watermark image file</h5>
+                    <p class="card-text" id="card-text-watermark-image-file"></p>
+                    <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+                    <input type="file" class="file-chooser__input" name="watermark-image-file" id="watermark-image-file">
+                </div>
+            </div>
+            <!--Upload Watermark Image : End -->
+        </div>
+    </div>
+    <div class="row">
+        <div style="height: 1em;"> </div>
+        <button onclick="downloadWatermarkedFile()" class="file-uploader__submit-button">Download Watermarked PDF File</button>
+    </div>
+</form>
+
+<!-- <div class="file-uploader">
+    <form method="post" id="file-uploader__form" class="file-uploader-hidden"
+        action="{{ url_for('split_pdf.download_all_pages') }}" enctype="multipart/form-data">
+        <div class="file-uploader__message-area">
+            <p>Select PDF file to split into single pages</p>
+        </div>
+        <div class="file-chooser">
+            <input type="file" class="file-chooser__input" name="file" id="file">
+        </div>
+        <div class="thumbnail-extended-container" id="thumbnail-extended-container"></div>
+        <button onclick="downloadAllPages()" class="file-uploader__submit-button">Download All Pages</button>
+    </form>
+</div> -->
+
+<script>
+    $(window).on('load', function () {
+        // Your code here
+        console.log('Window has completely loaded!');
+        setUp();
+    });
+
+    function setUp() {
+        document.getElementById('watermark-image-file').addEventListener('change', fileInputOnChange);
+        document.getElementById('watermark-pdf-file').addEventListener('change', fileInputOnChange);
+    }
+
+    function fileInputOnChange(event) {
+        var sourceElement = event.target;
+        var acceptedFileTypes = {
+            "watermark-image-file": ["jpg", "jpeg", "png", "bmp", "gif", "tiff"],
+            "watermark-pdf-file": ["pdf"]
+        };
+        var divElement = $("#card-" + sourceElement.id);
+        var svgElement = $("#svg-" + sourceElement.id);
+        var cardTextElement = $("#card-text-" + sourceElement.id);
+        var imgElement = $("#img-" + svgElement.attr("id"));
+
+        console.log("sourceElement.id: " + sourceElement.id);
+        console.log("svgElement.id: " + $("#svg-" + sourceElement.id).attr("id"));
+
+        //clear everything
+        $(".flash-messages").empty();
+        cardTextElement.removeClass("error");
+        cardTextElement.text("");
+        imgElement.hide();
+        svgElement.show();
+
+        // Find selected files
+        var file = $("#" + sourceElement.id).prop("files")[0];
+        console.log(file);
+        var fileName = file.name.match(/([^\\\/]+)$/)[0];
+        console.log("File Name:" + fileName);
+
+        //validate the file
+        var check = checkFileName(fileName, acceptedFileTypes[sourceElement.id]);
+        if (check === "valid") {
+            console.log("Upload file to get a thumbnail image")
+            // uploadAllowed = true;
+            getThumbnailImage(file, divElement, svgElement);
+        } else {
+            //indicate that the file is not ok
+            cardTextElement.addClass("error");
+            var errorText = "Unable to open this file.";
+            if (check === "badFileName") {
+                errorText = "Unsupported file type, only following supported: " + acceptedFileTypes[sourceElement.id].join(', ');
+            }
+            cardTextElement.text(errorText)
+        }
+    }
+
+    /*Invoked when ever file input is updated*/
+    function fileInputOnChange2(event) {
+        //clear everything
+        $(".thumbnail-extended-container").empty();
+        $('p.error-message').remove();
+        $(".file-chooser").removeClass("error")
+        $(".flash-messages").empty();
+
+        // Find all selected files
+        var file = $("#file").prop("files")[0];
+        console.log(file);
+
+        var fileName = file.name.match(/([^\\\/]+)$/)[0];
+        console.log("File Name:" + fileName);
+
+        //validate the file
+        var check = checkFileName(fileName);
+        var uploadAllowed = false;
+        if (check === "valid") {
+            uploadAllowed = true;
+            addFileToSelectedFileList(file);
+        } else {
+            //indicate that the file is not ok
+            $(".file-chooser").addClass("error");
+            var errorText = "Unable to open this file.";
+            if (check === "badFileName") {
+                errorText = "We cannot accept this file type at this time.";
+            }
+            $(".file-chooser__input").after(
+                '<p class="error-message">' + errorText + "</p>"
+            );
+        }
+    }
+
+    function getThumbnailImage(file, divElement, svgElement) {
+        console.log("file:" + file);
+        console.log("divElement:" + divElement);
+        console.log("svgElement:" + svgElement);
+
+        //Create a temporary loading image
+        var tempLoadingImage = createImage("img-" + svgElement.attr("id"), "{{ url_for('static', filename='img/loading.gif') }}");
+        tempLoadingImage.classList.add("image-extended");
+        divElement.append(tempLoadingImage);
+        //Hide placeholder image
+        svgElement.hide();
+
+        //upload file to get a thumbnail 
+        const formData = new FormData();
+        formData.append('file', file);
+        fetch("{{ url_for('watermark_pdf.get_thumbnail') }}", {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    tempLoadingImage.src = "data:image/png;base64," + data.image;
+                } else {
+                    console.error('Upload failed:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error during upload:', error);
+            });
+    }
+
+    function createImage(imageId, imageSource) {
+        //Create Image and return
+        const thumbnail = document.createElement('img');
+        thumbnail.id = imageId;
+        thumbnail.name = imageId;
+        thumbnail.src = imageSource;
+        thumbnail.width = 200;
+        thumbnail.height = 200;
+        thumbnail.className = 'thumbnail-extended-white';
+        return thumbnail;
+    }
+
+    function checkFileName(fileName, acceptedFileTypes) {
+        console.log("Accepted file types: " + acceptedFileTypes.join(", "))
+        var accepted = "invalid",
+            //acceptedFileTypes = ["pdf"],
+            regex;
+
+        for (var i = 0; i < acceptedFileTypes.length; i++) {
+            regex = new RegExp("\\." + acceptedFileTypes[i] + "$", "i");
+
+            if (regex.test(fileName)) {
+                accepted = "valid";
+                break;
+            } else {
+                accepted = "badFileName";
+            }
+        }
+        return accepted;
+    }
+
+    function checkFileName2(fileName) {
+        var accepted = "invalid",
+            acceptedFileTypes = ["pdf"],
+            regex;
+
+        for (var i = 0; i < acceptedFileTypes.length; i++) {
+            regex = new RegExp("\\." + acceptedFileTypes[i] + "$", "i");
+
+            if (regex.test(fileName)) {
+                accepted = "valid";
+                break;
+            } else {
+                accepted = "badFileName";
+            }
+        }
+        return accepted;
+    }
+
+    function downloadWatermarkedFile() {
+        $("#file-uploader__form").submit();
+    }
+</script>
+
+{% endblock %}

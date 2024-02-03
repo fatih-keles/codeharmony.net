@@ -1,0 +1,168 @@
+{% extends 'base_template-v2.html' %}
+
+{% block title %}Welcome - Extract Images From Your PDF Files{% endblock %}
+
+{% block header %}Welcome{% endblock %}
+{% block header_text %}{% endblock %}
+
+{% block content %}
+<div class="file-uploader">
+    <form method="post" id="file-uploader__form" class="file-uploader-hidden"
+        action="{{ url_for('extract_image_pdf.download_all_images') }}" enctype="multipart/form-data">
+        <div class="file-uploader__message-area">
+            <p>Select PDF file to extract images</p>
+        </div>
+        <div class="file-chooser">
+            <input type="file" class="file-chooser__input" name="file" id="file">
+        </div>
+        <div class="thumbnail-extended-container" id="thumbnail-extended-container"></div>
+        <button onclick="downloadAllImages()" class="file-uploader__submit-button">Download All Images</button>
+    </form>
+</div>
+
+<script>
+    $(window).on('load', function () {
+        // Your code here
+        console.log('Window has completely loaded!');
+        setUp();
+    });
+
+    function setUp() {
+        document.getElementById('file').addEventListener('change', fileInputOnChange);
+    }
+
+    /*Invoked when ever file input is updated*/
+    function fileInputOnChange(event) {
+        //clear everything
+        $(".thumbnail-extended-container").empty();
+        $('p.error-message').remove();
+        $(".file-chooser").removeClass("error")
+        $(".flash-messages").empty();
+
+        // Find all selected files
+        var file = $("#file").prop("files")[0];
+        console.log(file);
+
+        if (file) {
+            var fileName = file.name.match(/([^\\\/]+)$/)[0];
+            console.log("File Name:" + fileName);
+
+            //validate the file
+            var check = checkFileName(fileName);
+            var uploadAllowed = false;
+            if (check === "valid") {
+                uploadAllowed = true;
+                addFileToSelectedFileList(file);
+            } else {
+                //indicate that the file is not ok
+                $(".file-chooser").addClass("error");
+                var errorText = "Unable to open this file.";
+                if (check === "badFileName") {
+                    errorText = "We cannot accept this file type at this time.";
+                }
+                $(".file-chooser__input").after(
+                    '<p class="error-message">' + errorText + "</p>"
+                );
+            }
+        }
+    }
+
+    function addFileToSelectedFileList(file) {
+        i = -1;
+        //Find thumbnail container
+        var thumbnailContainer = $(".thumbnail-extended-container");
+        //Create a card
+        var thumbnailContainerCard = $("<li id='" + "card_thumbnail_" + i + "' class='thumbnail-extended-container-card container-extended'></li>");
+        //create a temporary loading image
+        const thumbnaiImagelId = "thumbnail_" + i;
+        //console.log("Working on:" + thumbnailId);
+        var tempLoadingImage = createImage(thumbnaiImagelId, "{{ url_for('static', filename='img/loading.gif') }}");
+        tempLoadingImage.classList.add("image");
+        //Append thumbnail 
+        thumbnailContainerCard.append(tempLoadingImage);
+        thumbnailContainer.append(thumbnailContainerCard);
+
+        //upload file to get a thumbnail 
+        const formData = new FormData();
+        formData.append('file', file);
+        fetch("{{ url_for('extract_image_pdf.get_thumbnails') }}", {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    $(".thumbnail-extended-container").empty();
+                    console.log("data.images.length:"+data.images.length);
+                    if (data.images.length == 0) {
+                        var flash_messages = $(".flash-messages");
+                        flash_messages.removeClass("d-none");
+                        flash_messages.append($("<div class='alert alert-danger' role='alert'>No images found in the document</div>"))
+                    }
+                    
+                    for (let index = 0; index < data.images.length; index++) {
+                        const image = data.images[index];
+                        console.log("page_number:" + image.page_number)
+                        //Create a card
+                        var thumbnailContainerCard = $("<li id='" + "card_thumbnail_" + index + "' class='thumbnail-extended-container-card container-extended'></li>");
+                        if (image.page_number < 0) {
+                            var tempLoadingImage = $("<div class='more-pages thumbnail-extended image-extended'>" + image.page_content + "</div>")
+                            //Append thumbnail 
+                            thumbnailContainerCard.append(tempLoadingImage);
+                        } else {
+                            //create a temporary loading image
+                            const thumbnaiImagelId = "thumbnail_" + index;
+                            //console.log("Working on:" + thumbnailId);
+                            var tempLoadingImage = createImage(thumbnaiImagelId, "{{ url_for('static', filename='loading.gif') }}");
+                            tempLoadingImage.src = "data:image/png;base64," + image.image;
+                            tempLoadingImage.classList.add("image-extended");
+                            //Append thumbnail 
+                            thumbnailContainerCard.append(tempLoadingImage);
+                        }
+                        thumbnailContainer.append(thumbnailContainerCard);
+                    }
+                } else {
+                    console.error('Upload failed:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error during upload:', error);
+            });
+    }
+
+    function createImage(imageId, imageSource) {
+        //Create Image and return
+        const thumbnail = document.createElement('img');
+        thumbnail.id = imageId;
+        thumbnail.name = imageId;
+        thumbnail.src = imageSource;
+        thumbnail.width = 200;
+        thumbnail.height = 200;
+        thumbnail.className = 'thumbnail-extended';
+        return thumbnail;
+    }
+
+    function checkFileName(fileName) {
+        var accepted = "invalid",
+            acceptedFileTypes = ["pdf"],
+            regex;
+
+        for (var i = 0; i < acceptedFileTypes.length; i++) {
+            regex = new RegExp("\\." + acceptedFileTypes[i] + "$", "i");
+
+            if (regex.test(fileName)) {
+                accepted = "valid";
+                break;
+            } else {
+                accepted = "badFileName";
+            }
+        }
+        return accepted;
+    }
+
+    function downloadAllImages() {
+        $("#file-uploader__form").submit();
+    }
+</script>
+
+{% endblock %}

@@ -1,0 +1,249 @@
+.file-uploader {
+  background-color: #f1f1f7;
+  border-radius: 3px;
+  color: #242424;
+}
+
+.file-uploader__message-area {
+  font-size: 18px;
+  padding: 5px;
+  text-align: center;
+  /* color: #377a65; */
+}
+
+.file-list {
+  background-color: white;
+  font-size: 16px;
+}
+
+.file-list__name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-list li {
+  height: 50px;
+  line-height: 50px;
+  margin-left: 0.5em;
+  border: none;
+  overflow: hidden;
+}
+
+.removal-button {
+  width: 20%;
+  border: none;
+  background-color: #d65d38;
+  color: white;
+}
+
+.removal-button::before {
+  content: "X";
+}
+
+.removal-button:focus {
+  outline: 0;
+}
+
+.file-chooser {
+  padding: 5px;
+  transition: background-color 1s, height 1s;
+}
+
+.file-chooser p {
+  font-size: 18px;
+  padding-top: 5px;
+}
+
+.file-uploader {
+  /* max-width: 700px; */
+  height: auto;
+  margin: 5px auto;
+}
+
+.file-uploader * {
+  display: block;
+}
+
+.file-uploader input[type="submit"] {
+  margin-top: 5px;
+  float: right;
+}
+
+.file-list {
+  margin: 0 auto;
+  max-width: 90%;
+}
+
+.file-list__name {
+  max-width: 70%;
+  float: left;
+}
+
+.removal-button {
+  display: inline-block;
+  height: 100%;
+  float: right;
+}
+
+.file-chooser {
+  width: 90%;
+  margin: 5px auto;
+}
+
+.file-chooser__input {
+  margin: 0 auto;
+}
+
+.file-uploader__submit-button {
+  width: 100%;
+  border: none;
+  font-size: 1.5em;
+  padding: 1em;
+  background-color: #264A87;
+  color: white;
+    background: linear-gradient(-45deg, #1391a5, #274685);
+    color: #fff;
+    box-shadow: 0 10px 30px 0 rgba(0, 0, 0, 0.15);
+    border-radius: 0.375rem;
+}
+
+.file-uploader__submit-button:hover {
+  background-color: #2e55a1;
+  cursor: pointer;
+  transform: translateY(-2px);
+}
+
+.file-list li:after,
+.file-uploader:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.hidden {
+  display: none;
+}
+
+.hidden input {
+  display: none;
+}
+
+.error {
+  background-color: #d65d38;
+  color: white;
+}
+
+
+/*# sourceMappingURL=style-extended.css.map */
+
+.thumbnail-extended-container-card {
+  padding: 5px;
+  /* background-color: rgb(94, 171, 147); */
+  background-color: #5471A5;
+}
+
+.thumbnail-extended-container {
+  display: flex;
+  flex-wrap: wrap;
+  height: auto;
+  margin: 2em auto;
+  /* background-color: rgb(114, 191, 167); */
+  background-color: #6E8EC2;
+  padding: 5px;
+}
+
+.thumbnail-extended {
+  margin: 10px;
+  /* background-color: rgb(114, 191, 167); */
+  background-color: #6E8EC2;
+  border-radius: 3px;
+  color: #242424;
+}
+
+/* Apply a blur effect on hover */
+.thumbnail-extended:hover {
+  transform: translateY(-5px);
+  filter: blur(0.5px);
+  cursor: pointer;
+  border: 1px dashed #3e4202;
+}
+
+.thumbnail-extended-white {
+  margin: 10px;
+  /* background-color: rgb(114, 191, 167); */
+  /* background-color: #6E8EC2; */
+  border-radius: 3px;
+  color: #242424;
+}
+
+/* Apply a blur effect on hover */
+.thumbnail-extended-white:hover {
+  transform: translateY(-5px);
+  filter: blur(0.5px);
+  cursor: pointer;
+  border: 1px dashed #3e4202;
+}
+
+.container-extended {
+  position: relative;
+}
+
+.image-extended {
+  display: block;
+  width: 200px;
+  height: auto;
+}
+
+.overlay-extended {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  transition: .5s ease;
+  /* background-color: #04AA6D; */
+  background-color: #2e55a1;
+  cursor: pointer;
+}
+
+.container-extended:hover .overlay-extended {
+  opacity: 0.9;
+}
+
+.text-extended {
+  color: white;
+  font-size: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+.text-extended-small {
+  color: white;
+  font-size: xx-small;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.more-pages {
+  width: 200px;
+  height: 93%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #154603;
+  font-size: 18px;
+  font-weight: bold;
+}

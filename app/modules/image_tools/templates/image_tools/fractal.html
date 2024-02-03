@@ -1,0 +1,676 @@
+{% extends 'base_template-v2.html' %}
+
+{% block title %}Welcome - Generate Abstract Images{% endblock %}
+
+{% block header %}Welcome{% endblock %}
+{% block header_text %}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-12">
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home"
+                    type="button" role="tab" aria-controls="nav-home" aria-selected="true">Punch</button>
+                <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile"
+                    type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Mandelbrot</button>
+                <!-- <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact"
+                    type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Contact</button> -->
+            </div>
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                <!--Home Tab Contents -->
+                <span>&nbsp;</span>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <!--Form Input -->
+                        <div class="card ">
+                            <h5 class="card-header">Input Variables</h5>
+                            <!-- <div class="card-img-top" id="card-watermark-pdf-file">
+                                    Form input here
+                                </div> -->
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4 mb-4 mb-md-0">
+                                        <p><label for="rangeInput" class="form-label">Depth</label>: <span
+                                                id="rangeValue">0</span></p>
+                                    </div>
+                                    <div class="col-md-8 mb-4 mb-md-0">
+                                        <input type="range" class="form-range" value="0" min="0" max="8"
+                                            id="rangeInput">
+                                    </div>
+                                </div>
+                                <div class="row" id="use-complementary-colors-row">
+                                    <div class="col-md-6 mb-4 mb-md-0">
+                                        <div class="form-check form-switch" style="padding-left: 0px;">
+                                            <label class="form-check-label" for="flexSwitchCheckDefault">Use complementary colors</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-4 mb-md-0">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" id="use-random-colors-row">
+                                    <div class="col-md-6 mb-4 mb-md-0">
+                                        <div class="form-check form-switch" style="padding-left: 0px;">
+                                            <label class="form-check-label" for="check-use-random">Use random punch colors</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-4 mb-md-0">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="check-use-random">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-4 mb-md-0">
+                                        <label for="colorPicker" class="form-label">Background Color</label>: <span
+                                            id="colorPickerValue">#ffff00</span>
+                                    </div>
+                                    <div class="col-md-6 mb-4 mb-md-0">
+                                        <input type="color" id="colorPicker" colorpick-eyedropper-active="true"
+                                            value="#ffff00">
+                                    </div>
+                                </div>
+                                <div class="row" id="punch-color-row">
+                                    <div class="col-md-6 mb-4 mb-md-0">
+                                        <label for="colorPicker2" class="form-label">Punch Color</label>: <span
+                                            id="colorPickerValue2">#ffff00</span>
+                                    </div>
+                                    <div class="col-md-6 mb-4 mb-md-0">
+                                        <input type="color" id="colorPicker2" colorpick-eyedropper-active="true"
+                                            value="#0000ff">
+                                    </div>
+                                </div>
+
+                                <div class="row"><!-- Spacer--> &nbsp;</div>
+                                <div class="row">
+                                    <button onclick="formInputOnChange(event)" class="file-uploader__submit-button"
+                                        id="punch">Generate</button>
+                                </div>
+
+                                <div class="row"><!-- Spacer--> &nbsp;</div>
+                                <!-- Guide -->
+                                <div class="row">
+                                    <div class="accordion" id="accordionExample1">
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="headingOne1">
+                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne1" aria-expanded="true" aria-controls="collapseOne1">
+                                                    How to use
+                                                </button>
+                                            </h2>
+                                            <div id="collapseOne1" class="accordion-collapse collapse show" aria-labelledby="headingOne1" data-bs-parent="#accordionExample1">
+                                                <div class="accordion-body">
+                                                    You can decide on the <code>depth</code> and select <code>colors</code> 
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="headingThree1">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree1" aria-expanded="false" aria-controls="collapseThree1">
+                                                    References
+                                                </button>
+                                            </h2>
+                                            <div id="collapseThree1" class="accordion-collapse collapse" aria-labelledby="headingThree1" data-bs-parent="#accordionExample1">
+                                                <div class="accordion-body">
+                                                    <ul>
+                                                        <li>This one is directly taken from <a href="https://pymupdf.readthedocs.io/en/latest/recipes-images.html#how-to-use-pixmaps-making-a-fractal" target="_blank">PyMuPDF</a> documentation. I have added few things on top of it.</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Guide: End-->
+                            </div>
+                        </div>
+                        <!--Form Input : End-->
+                    </div>
+                    <div class="col-sm-6">
+                        <!--Form Output -->
+                        <div class="card">
+                            <h5 class="card-header">Your Fractal Image</h5>
+                            <div class="card-img-top" id="card-fractal-image-output">
+                                <img style="display: none;" width="100%" height="100%" id="img-1" name="img-1"
+                                    src="{{ url_for('static', filename='img/loading.gif') }}" />
+                            </div>
+                            <div class="card-body"></div>
+                        </div>
+                        <!--Upload Watermark Image : End -->
+                    </div>
+                </div>
+                <!--Home Tab Contents End-->
+            </div>
+            <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                <!-- Profile Tab Contents -->
+                <span>&nbsp;</span>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <!--Form Input -->
+                        <div class="card ">
+                            <h5 class="card-header">Input Variables</h5>
+                            <div class="card-body">
+                                <!-- Image Type-->
+                                <div class="row">
+                                    <div class="col-md-4 mb-4 mb-md-0">
+                                        <p>Image Type</p>
+                                    </div>
+                                    <div class="col-md-8 mb-4 mb-md-0">
+                                        <select id="select-image-type" class="form-select" aria-label="Default select example">
+                                            <option value="blackwhite" selected>Black & White</option>
+                                            <option value="grayscale">Grayscale</option>
+                                            <option value="color">Color</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <!-- Image Type: End-->
+                                <!-- Color Palette-->
+                                <div class="row" id="div-color-palette" style="display: none;">
+                                    <div class="col-md-4 mb-4 mb-md-0">
+                                        <p>Color Palettes</p>
+                                    </div>
+                                    <div class="col-md-8 mb-4 mb-md-0">
+                                        <select id="select-color-palette" class="form-select" aria-label="Default select example">
+                                            <option value="Paired" selected>Paired</option>
+                                            <option value="turbo">turbo</option>
+                                            <option value="twilight_shifted">twilight_shifted</option>
+                                            <option value="twilight">twilight</option>
+                                            <option value="cividis">cividis</option>
+                                            <option value="viridis">viridis</option>
+                                            <option value="plasma">plasma</option>
+                                            <option value="inferno">inferno</option>
+                                            <option value="magma">magma</option>
+                                            <option value="manual">Let me define my own palette</option>
+                                          </select>
+                                    </div>
+                                    <div class="row" id="div-color-palette-preview" style="display: none;">
+                                        <div class="col-md-12 mt-4 mb-4 mb-md-0">
+                                            <img src="{{ url_for('static', filename='img/Paired.png') }}" id="img-color-palette-preview" width="100%" height="100%" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Color Palette: End-->
+                                <!-- Manual Color Palette-->
+                                <div class="row" id="div-manual-color-palette" style="display: none;">
+                                    <div class="col-md-4 mt-2 mb-4 mb-md-0">
+                                        <div class=" d-flex align-items-center">
+                                            <label for="colorPickerExterior" class="form-label">Exterior:</label> 
+                                            <input type="color" id="colorPickerExterior" colorpick-eyedropper-active="true" value="#ffffff" title="Exterior">
+                                        </div>
+                                        <div class="">
+                                            <!-- <label class="form-check-label" for="flexSwitchCheckExterior">Smooth</label> -->
+                                            <!-- <input class="form-check-input" type="checkbox" id="flexSwitchCheckExterior"> -->
+                                            <select id="select-exterior-color-palette" class="form-select" aria-label="Default select example">
+                                                <option value="single" selected>Single Color</option>
+                                                <option value="shades">Color Shades</option>
+                                                <option value="complementary">Complementary Colors</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mt-2 mb-4 mb-md-0">
+                                        <div class=" d-flex align-items-center">
+                                            <label for="colorPickerGrayArea" class="form-label">Gray Area:</label> 
+                                            <input type="color" id="colorPickerGrayArea" colorpick-eyedropper-active="true" value="#ffff00" title="Gray Area">
+                                        </div>
+                                        <div class="">
+                                            <!-- <label class="form-check-label" for="flexSwitchCheckGrayArea">Smooth</label>
+                                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckGrayArea"> -->
+                                            <select id="select-gray-area-color-palette" class="form-select" aria-label="Default select example">
+                                                <option value="single" selected>Single Color</option>
+                                                <option value="shades">Color Shades</option>
+                                                <option value="complementary">Complementary Colors</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mt-2 mb-4 mb-md-0">
+                                        <div class=" d-flex align-items-center">
+                                            <label for="colorPickerInterior" class="form-label">Interior:</label> 
+                                            <input type="color" id="colorPickerInterior" colorpick-eyedropper-active="true" value="#000000" title="Interior">
+                                        </div>
+                                        <div class="">
+                                            <!-- <label class="form-check-label" for="flexSwitchCheckInterior">Smooth</label>
+                                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckInterior"> -->
+                                            <select id="select-interior-color-palette" class="form-select" aria-label="Default select example">
+                                                <option value="single" selected>Single Color</option>
+                                                <option value="shades">Color Shades</option>
+                                                <option value="complementary">Complementary Colors</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Manual Color Palette: End-->
+                                <!-- Gradient -->
+                                <div class="row" id="div-gradient" style="display: none;">
+                                    <div class="col-md-4 mt-2 mb-4 mb-md-0 form-check" style="padding-left: 2.5em;">
+                                        <input class="form-check-input" type="checkbox" value="" id="check-shuffle">
+                                        <label class="form-check-label" for="check-shuffle">
+                                          Shuffle
+                                        </label>
+                                      </div>
+                                    <div class="col-md-8 mt-2 mb-4 mb-md-0">
+                                        <select id="select-gradient" class="form-select" aria-label="Default select example">
+                                            <option value="no-gradient" selected>No Gradient</option>
+                                            <option value="linear">Linear Gradient</option>
+                                            <option value="cubic">Cubic Gradient</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <!-- Gradient: End-->
+
+                                <!-- Viewport -->
+                                <div class="row">
+                                    <div class="col-md-2 mt-2 mb-4 mb-md-0">
+                                        <label class="form-label" for="check-shuffle">Viewport</label>
+                                    </div>
+                                    <div class="col-md-4 mt-2 mb-4 mb-md-0">
+                                        <select id="select-viewport" class="form-select" aria-label="Viewport View">
+                                            {% for preset_name, preset in default_presets.items() %}
+                                            <option value="{{ preset.name }}" {% if loop.first %} selected {% endif %}>{{ preset.display_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mt-2 mb-4 mb-md-0">
+                                        <div class="row">
+                                            <div class="col-md-4"><label for="viewport-center-point" class="form-label">Center</label></div>
+                                            <div class="col-md-8">
+                                                <!-- <input type="text" class="form-control" id="viewport-center-point" placeholder="e.g. -0.7435 + 0.1314j"> -->
+                                                <input type="text" class="form-control" id="viewport-center-point" value='{{ default_presets.get("entire-fractal").center }}' placeholder='e.g. {{ default_presets.get("entire-fractal").center }}'>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4"><label for="viewport-width" class="form-label">Width</label></div>
+                                            <div class="col-md-8">
+                                                <input type="text" class="form-control" id="viewport-width" value='{{ default_presets.get("entire-fractal").width }}' placeholder='e.g. {{ default_presets.get("entire-fractal").width }}'>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4"><label for="viewport-width" class="form-label">Escape</label></div>
+                                            <div class="col-md-8">
+                                                <input type="text" class="form-control" id="viewport-iterations" value='{{ default_presets.get("entire-fractal").max_iterations }}' placeholder='e.g. {{ default_presets.get("entire-fractal").max_iterations }}'>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Viewport: End-->
+
+                                <div class="row"><!-- Spacer--> &nbsp;</div>
+                                <div class="row">
+                                    <button onclick="formInputOnChange(event)" class="file-uploader__submit-button"
+                                        id="mandelbrot">Generate</button>
+                                </div>
+                                
+                                <div class="row"><!-- Spacer--> &nbsp;</div>
+                                <!-- Guide -->
+                                <div class="row">
+                                    <div class="accordion" id="accordionExample">
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="headingOne">
+                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                    How to use
+                                                </button>
+                                            </h2>
+                                            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                                <div class="accordion-body">
+                                                    You can choose between <strong>image types</strong> If you select <code>Color</code> you have many options: prebuilt color palettes or building your own palette. You <code>shuffle</code> the colors and apply <code>gradient</code>. Start with preset <strong>viewport view</strong>s then change <code>center</code> and <code>width</code> of the magnifying square. Consult <strong>pixel coordinates</strong> below. The bigger <code>escape</code> number the greater detail and more cpu cycles. 
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="headingTwo">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                                    Pixel Coordinates
+                                                </button>
+                                            </h2>
+                                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                                <div class="accordion-body">
+                                                    <figure class="figure">
+                                                        <img src="{{ url_for('static', filename='img/mandelbrot-graph.png') }}" class="figure-img img-fluid rounded" alt="...">
+                                                        <figcaption class="figure-caption">Mandelbrot set drawing pixel coordinates - <a href="https://github.com/HyveInnovate/mandelbrot-kata?tab=readme-ov-file" style="color:red" target="_blank">Image Source</a></figcaption>
+                                                    </figure>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="headingThree">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                                    References
+                                                </button>
+                                            </h2>
+                                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                                                <div class="accordion-body">
+                                                    <ul>
+                                                        <li>There is a great tutorial on <a href="https://realpython.com/mandelbrot-set-python/" target="_blank">realpython.com</a> which helped me build this from scratch</li>
+                                                        <li>This <a href="https://arachnoid.com/mandelbrot_set/" target="_blank">crazy website</a> will let you scroll into Mandelbrot with your browser</li>
+                                                        <li> Thank you <a href="https://www.marksmath.org/classes/DiscourseArchive/FractalLACFall2016/t/post-a-groovy-image-of-the-mandelbrot-set/73/" target="_blank">dcutchen</a> for the hypnotic spiral
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Guide: End-->
+                            </div>
+                        </div>
+                        <!--Form Input : End-->
+                    </div>
+                    <div class="col-sm-6">
+                        <!--Form Output -->
+                        <div class="card">
+                            <h5 class="card-header">Your Fractal Image</h5>
+                            <div class="card-img-top" id="card-fractal-image-output2">
+                                <img style="display: none;" width="100%" height="100%" id="img-2" name="img-2"
+                                    src="{{ url_for('static', filename='img/loading.gif') }}" />
+                            </div>
+                            <div class="card-body"></div>
+                        </div>
+                        <!--Upload Watermark Image : End -->
+                    </div>
+                </div>
+                <!-- Profile Tab Contents End-->
+            </div>
+            <!-- <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">Contact</div> -->
+        </div>
+    </div>
+    <div class="col-sm-6"></div>
+</div>
+
+<script>
+    // Convert Python dictionary to JavaScript object
+    var defaultPresets = {
+        {% for preset_name, preset in default_presets.items() %}
+            '{{ preset_name }}': {
+                center: '{{ preset.center }}',
+                width: {{ preset.width }},
+                max_iterations: {{ preset.max_iterations }},
+                name: '{{ preset.name }}',
+                display_name: '{{ preset.display_name }}'
+            }
+            {% if not loop.last %},{% endif %}
+        {% endfor %}
+    };
+</script>
+
+<script>
+    $(window).on('load', function () {
+        // Your code here
+        console.log('Window has completely loaded!');
+        setUp();
+    });
+
+    function setUp() {
+        document.getElementById('rangeInput').addEventListener('input', updateValueLabelText);
+        document.getElementById('colorPicker').addEventListener('input', updateValueLabelText);
+        document.getElementById('colorPicker2').addEventListener('input', updateValueLabelText);
+        document.getElementById('flexSwitchCheckDefault').addEventListener('input', showHidePunchColors);
+        document.getElementById('check-use-random').addEventListener('input', showHidePunchColors2);
+        document.getElementById('select-image-type').addEventListener('input', showColorPalette);
+        document.getElementById('select-color-palette').addEventListener('input', showSelectedColorPalettePreview);
+        document.getElementById('select-viewport').addEventListener('input', updateCenterWidthEscape);
+
+        // document.getElementById('watermark-image-file').addEventListener('change', fileInputOnChange);
+        // document.getElementById('watermark-pdf-file').addEventListener('change', fileInputOnChange);
+    }
+
+    function updateCenterWidthEscape(event) {
+        var selectedViewportKey = $("#select-viewport").val();
+        console.log("selectedViewportKey:"+selectedViewportKey);
+        $("#viewport-center-point").val(defaultPresets[selectedViewportKey].center);
+        $("#viewport-width").val(defaultPresets[selectedViewportKey].width);
+        $("#viewport-iterations").val(defaultPresets[selectedViewportKey].max_iterations);
+    }
+
+    function showColorPalette(event) {
+        var image_type = $("#select-image-type").val();
+        if (image_type == "color") {
+            $("#div-color-palette").show();
+            // if ($("#select-color-palette").val() != "manual"){
+            //     $("#div-color-palette-preview").show();
+            // }
+            showSelectedColorPalettePreview(event);
+            $("#div-gradient").show();
+        } else {
+            $("#div-color-palette").hide();
+            $("#div-color-palette-preview").hide();
+            $("#div-manual-color-palette").hide();
+            $("#div-gradient").hide();
+        }
+    }
+
+    function showSelectedColorPalettePreview(event){
+        var palette = $("#select-color-palette").val();
+        var base_url = "{{ url_for('static', filename='img/') }}";
+        console.log("selected palette:" + palette);
+        if (palette && palette.trim() !== "") {
+            img_url = base_url +palette+".png";
+            console.log("img_url:"+img_url);
+            if (palette == "manual") {
+                //hide palette preview image
+                $("#div-color-palette-preview").hide();
+                $("#img-color-palette-preview").attr("src",base_url +"None.png"); 
+                //show manual palette color pickers
+                $("#div-manual-color-palette").show();
+            } else {
+                //show palette preview image
+                $("#img-color-palette-preview").attr("src",img_url);
+                $("#div-color-palette-preview").show(); 
+                //hide manual palette color pickers
+                $("#div-manual-color-palette").hide();
+            }
+        }
+    }
+
+    function showHidePunchColors(event) {
+        console.log("flexSwitchCheckDefault value:" + $("#flexSwitchCheckDefault").is(":checked"));
+        if ($("#flexSwitchCheckDefault").is(":checked")){
+            $("#punch-color-row").hide();
+            $("#use-random-colors-row").hide();
+        } else{
+            $("#punch-color-row").show();
+            $("#use-random-colors-row").show();
+        }
+    }
+
+    function showHidePunchColors2(event) {
+        console.log("check-use-random value:" + $("#check-use-random").is(":checked"));
+        if ($("#check-use-random").is(":checked")){
+            $("#punch-color-row").hide();
+            $("#use-complementary-colors-row").hide();
+        } else{
+            $("#punch-color-row").show();
+            $("#use-complementary-colors-row").show();
+        }
+    }
+
+    function updateValueLabelText(event) {
+        $('#rangeValue').text($("#rangeInput").val());
+        $('#colorPickerValue').text($("#colorPicker").val());
+        $('#colorPickerValue2').text($("#colorPicker2").val());
+    }
+
+    function formInputOnChange(event) {
+        var sourceElement = event.target;
+        image_type = sourceElement.id;
+        if (image_type == "punch") {
+            // Set Values
+            $('#rangeValue').text($("#rangeInput").val());
+            console.log("rangeInput value:" + $("#rangeInput").val());
+            $('#colorPickerValue').text($("#colorPicker").val());
+            console.log("colorPicker value:" + $("#colorPicker").val())
+        }
+        if (image_type == "mandelbrot") {
+            
+        }
+        getThumbnailImage(image_type);
+    }
+
+    function fileInputOnChange(event) {
+        var sourceElement = event.target;
+        var acceptedFileTypes = {
+            "watermark-image-file": ["jpg", "jpeg", "png", "bmp", "gif", "tiff"],
+            "watermark-pdf-file": ["pdf"]
+        };
+        var divElement = $("#card-" + sourceElement.id);
+        var svgElement = $("#svg-" + sourceElement.id);
+        var cardTextElement = $("#card-text-" + sourceElement.id);
+        var imgElement = $("#img-" + svgElement.attr("id"));
+
+        console.log("sourceElement.id: " + sourceElement.id);
+        console.log("svgElement.id: " + $("#svg-" + sourceElement.id).attr("id"));
+
+        //clear everything
+        $(".flash-messages").empty();
+        cardTextElement.removeClass("error");
+        cardTextElement.text("");
+        imgElement.hide();
+        svgElement.show();
+
+        // Find selected files
+        var file = $("#" + sourceElement.id).prop("files")[0];
+        console.log(file);
+        var fileName = file.name.match(/([^\\\/]+)$/)[0];
+        console.log("File Name:" + fileName);
+
+        //validate the file
+        var check = checkFileName(fileName, acceptedFileTypes[sourceElement.id]);
+        if (check === "valid") {
+            console.log("Upload file to get a thumbnail image")
+            // uploadAllowed = true;
+            getThumbnailImage(file, divElement, svgElement);
+        } else {
+            //indicate that the file is not ok
+            cardTextElement.addClass("error");
+            var errorText = "Unable to open this file.";
+            if (check === "badFileName") {
+                errorText = "Unsupported file type, only following supported: " + acceptedFileTypes[sourceElement.id].join(', ');
+            }
+            cardTextElement.text(errorText)
+        }
+    }
+
+    function getThumbnailImage(image_type) {
+        //Create a temporary loading image
+        var tempLoadingImage;
+        if (image_type == "punch") {
+            tempLoadingImage = $("#img-1");
+        }
+        if (image_type == "mandelbrot") {
+            tempLoadingImage = $("#img-2");
+        }
+        tempLoadingImage.hide();
+        tempLoadingImage.attr('src', "{{ url_for('static', filename='img/loading.gif') }}");
+        //tempLoadingImage.classList.add("image-extended");
+        tempLoadingImage.show();
+
+        //upload file to get a thumbnail 
+        const formData = new FormData();
+        var submitURL;
+        if (image_type == "punch") {
+            submitURL = "{{ url_for('image_tools.get_punch') }}";
+            formData.append("depth", $("#rangeInput").val());
+            formData.append("bgcolor", $("#colorPicker").val());
+            formData.append("fgcolor", $("#colorPicker2").val());
+            formData.append("usecompcolor", $("#flexSwitchCheckDefault").is(":checked"));
+            formData.append("userandomcolor", $("#check-use-random").is(":checked"));
+        }
+        if (image_type == "mandelbrot") {
+            submitURL = "{{ url_for('image_tools.get_mandelbrot') }}";
+            // formData.append("imgtype", $("input[name='imageType']:checked").val());
+            formData.append("imgtype", $("#select-image-type").val());
+            formData.append("colormap_name", $("#select-color-palette").val());
+            formData.append("cmexterior", $("#colorPickerExterior").val());
+            formData.append("cmexterior_smooth", $("#select-exterior-color-palette").val());
+
+            formData.append("cminterior", $("#colorPickerInterior").val());
+            formData.append("cminterior_smooth", $("#select-interior-color-palette").val());
+
+            formData.append("cmgray", $("#colorPickerGrayArea").val());
+            formData.append("cmgray_smooth", $("#select-gray-area-color-palette").val());
+            formData.append("shuffle", $("#check-shuffle").is(":checked"));
+            formData.append("gradient", $("#select-gradient").val());
+
+            formData.append("selectedview", $("#select-viewport").val());
+            formData.append("centerpoint", $("#viewport-center-point").val());
+            formData.append("width", $("#viewport-width").val());
+            formData.append("iterations", $("#viewport-iterations").val());
+        }
+
+        //formData.append('file', file);
+        console.log(formData);
+        fetch(submitURL, {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    tempLoadingImage.hide();
+                    tempLoadingImage.attr('src', "data:image/png;base64," + data.image);
+                    console.log("Image updated:" + data.image.length);
+                    tempLoadingImage.show();
+                } else {
+                    console.error('Upload failed:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error during upload:', error);
+            });
+    }
+
+    function createImage(imageId, imageSource) {
+        //Create Image and return
+        const thumbnail = document.createElement('img');
+        thumbnail.id = imageId;
+        thumbnail.name = imageId;
+        thumbnail.src = imageSource;
+        thumbnail.width = "100%";
+        thumbnail.height = "100%";
+        // thumbnail.className = 'thumbnail-extended-white';
+        return thumbnail;
+    }
+
+    function checkFileName(fileName, acceptedFileTypes) {
+        console.log("Accepted file types: " + acceptedFileTypes.join(", "))
+        var accepted = "invalid",
+            //acceptedFileTypes = ["pdf"],
+            regex;
+
+        for (var i = 0; i < acceptedFileTypes.length; i++) {
+            regex = new RegExp("\\." + acceptedFileTypes[i] + "$", "i");
+
+            if (regex.test(fileName)) {
+                accepted = "valid";
+                break;
+            } else {
+                accepted = "badFileName";
+            }
+        }
+        return accepted;
+    }
+
+    function checkFileName2(fileName) {
+        var accepted = "invalid",
+            acceptedFileTypes = ["pdf"],
+            regex;
+
+        for (var i = 0; i < acceptedFileTypes.length; i++) {
+            regex = new RegExp("\\." + acceptedFileTypes[i] + "$", "i");
+
+            if (regex.test(fileName)) {
+                accepted = "valid";
+                break;
+            } else {
+                accepted = "badFileName";
+            }
+        }
+        return accepted;
+    }
+
+    function downloadWatermarkedFile() {
+        $("#file-uploader__form").submit();
+    }
+</script>
+
+{% endblock %}

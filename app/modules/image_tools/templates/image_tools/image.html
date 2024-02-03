@@ -1,0 +1,888 @@
+{% extends 'base_template-v2.html' %}
+
+{% block title %}Welcome - Generate Abstract Images{% endblock %}
+
+{% block header %}Welcome{% endblock %}
+{% block header_text %}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-12">
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home"
+                    type="button" role="tab" aria-controls="nav-home" aria-selected="true">Color Palette</button>
+                <!-- <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile"
+                    type="button" role="tab" aria-controls="nav-profile" aria-selected="false">...</button> -->
+                <!-- <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact"
+                    type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Contact</button> -->
+            </div>
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                <!--Home Tab Contents -->
+                <span>&nbsp;</span>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <!--Form Input -->
+                        <div class="card ">
+                            <h5 class="card-header">Input Variables</h5>
+                            <!-- <div class="card-img-top" id="card-watermark-pdf-file">
+                                    Form input here
+                                </div> -->
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4 mb-4 mb-md-0">
+                                        Image File
+                                    </div>
+                                    <div class="col-md-8 mb-4 mb-md-0">
+                                        <input type="file" class="file-chooser__input" name="image-files" id="image-files" multiple>
+                                        <div class="invalid-input" style="color:var(--bs-danger)"></div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="border" id="image-thumbnail-preview-container"></div>
+                                </div>
+                                <div class="row"><!-- Spacer--> &nbsp;</div>
+                                <div class="row">
+                                    <div class="col-md-4 mb-4 mb-md-0">
+                                        Operation
+                                    </div>
+                                    <div class="col-md-8 mb-4 mb-md-0">
+                                        <select name="operation-type" id="operation-type" class="form-select"
+                                            aria-label="Default select example">
+                                            <option selected>Select operation</option>
+                                            <option value="get-palette">Get Image Palette</option>
+                                            <option value="create-thumbnail">Create Thumbnail</option>
+                                            <option value="resize">Resize</option>
+                                            <!-- <option value="blur">Blur</option> -->
+                                            <!-- <option value="rotate">Rotate</option> -->
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row"><!-- Spacer--> &nbsp;</div>
+
+                                <div class="row components" data-component="get-palette">
+                                    <div class="col-md-4 mb-4 mb-md-0">
+                                        <p><label for="paletteSizeRangeInput" class="form-label">Palette Size</label>:
+                                            <span id="paletteSizeRangeValue">8</span>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-8 mb-4 mb-md-0">
+                                        <input type="range" class="form-range" value="8" min="8" max="256"
+                                            id="paletteSizeRangeInput">
+                                    </div>
+                                </div>
+
+                                <div class="row components" data-component="create-thumbnail">
+                                    <div class="col-md-6 mb-4 mb-md-0">
+                                        <div class="input-group mb-3">
+                                            <input id="thumbnail_width" type="text" class="form-control" placeholder="Width"
+                                                aria-label="Width" aria-describedby="basic-addon1"/>
+                                            <span class="input-group-text" id="basic-addon1">px</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-4 mb-md-0">
+                                        <div class="input-group mb-3">
+                                            <input id="thumbnail_height" type="text" class="form-control" placeholder="Height"
+                                                aria-label="Height" aria-describedby="basic-addon2"/>
+                                            <span class="input-group-text" id="basic-addon2">px</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row components" data-component="resize">
+                                    <div class="col-md-6 mb-4 mb-md-0">
+                                        <div class="input-group mb-3">
+                                            <input id="resize_width" type="text" class="form-control" placeholder="Width"
+                                                aria-label="Width" aria-describedby="basic-addon3"/>
+                                            <span class="input-group-text" id="basic-addon3">px</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-4 mb-md-0">
+                                        <div class="input-group mb-3">
+                                            <input id="resize_height" type="text" class="form-control" placeholder="Height"
+                                                aria-label="Height" aria-describedby="basic-addon4"/>
+                                            <span class="input-group-text" id="basic-addon4">px</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row"><!-- Spacer--> &nbsp;</div>
+                                <div class="row" id="submit-results-container">
+                                    <!--Container for form results-->
+                                </div>
+                                <div class="row">
+                                    <button class="file-uploader__submit-button" id="process-image">Process</button>
+                                </div>
+
+                                <div class="row"><!-- Spacer--> &nbsp;</div>
+                                <!-- Guide -->
+                                <div class="row">
+                                    <div class="accordion" id="accordionExample1">
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="headingOne1">
+                                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                                    data-bs-target="#collapseOne1" aria-expanded="true"
+                                                    aria-controls="collapseOne1">
+                                                    How to use
+                                                </button>
+                                            </h2>
+                                            <div id="collapseOne1" class="accordion-collapse collapse show"
+                                                aria-labelledby="headingOne1" data-bs-parent="#accordionExample1">
+                                                <div class="accordion-body">
+                                                    You can extract the <code>color palette</code>s from multiple images. 
+                                                    Color palette will be displayed as a bar or treemap depending on the 
+                                                    number of colors. <br>
+                                                    <br>
+                                                    You can also <code>resize</code> multiple images. At least one of the 
+                                                    width or height needs to be provided.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="headingThree1">
+                                                <button class="accordion-button collapsed" type="button"
+                                                    data-bs-toggle="collapse" data-bs-target="#collapseThree1"
+                                                    aria-expanded="false" aria-controls="collapseThree1">
+                                                    References
+                                                </button>
+                                            </h2>
+                                            <div id="collapseThree1" class="accordion-collapse collapse"
+                                                aria-labelledby="headingThree1" data-bs-parent="#accordionExample1">
+                                                <div class="accordion-body">
+                                                    <ul>
+                                                        <li> There are nice examples in <a href="https://pillow.readthedocs.io/en/stable/" target="_blank">pillow</a> 
+                                                            documentation to start with.</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Guide: End-->
+                            </div>
+                        </div>
+                        <!--Form Input : End-->
+                    </div>
+                    <div class="col-sm-6">
+                        <!--Form Output -->
+                        <div class="card">
+                            <h5 class="card-header">Results</h5>
+                            <div class="card-img-top" id="card-fractal-image-output">
+                                <div class="row" style="display: none;" id="temp-loading-row">
+                                    <img width="100%" id="img-1" name="img-1"
+                                        src="{{ url_for('static', filename='img/loading.gif') }}" />
+                                </div>
+                                <div class="row" id="results-display-row" style="display: none;">
+                                    <div class="border" id="results-display-container"></div>
+                                </div>
+                            </div>
+                            <div class="card-body"></div>
+                        </div>
+                        <!--Upload Watermark Image : End -->
+                    </div>
+                </div>
+                <!--Home Tab Contents End-->
+            </div>
+            <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                <!-- Profile Tab Contents -->
+                <span>&nbsp;</span>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <!--Form Input -->
+                        <div class="card ">
+                            <h5 class="card-header">Input Variables</h5>
+                            <div class="card-body">
+                                <!-- Image Type-->
+                                <div class="row">
+                                    <div class="col-md-4 mb-4 mb-md-0">
+                                        <p>Image Type</p>
+                                    </div>
+                                    <div class="col-md-8 mb-4 mb-md-0">
+                                        <select id="select-image-type" class="form-select"
+                                            aria-label="Default select example">
+                                            <option value="blackwhite" selected>Black & White</option>
+                                            <option value="grayscale">Grayscale</option>
+                                            <option value="color">Color</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <!-- Image Type: End-->
+                                <!-- Color Palette-->
+                                <div class="row" id="div-color-palette" style="display: none;">
+                                    <div class="col-md-4 mb-4 mb-md-0">
+                                        <p>Color Palettes</p>
+                                    </div>
+                                    <div class="col-md-8 mb-4 mb-md-0">
+                                        <select id="select-color-palette" class="form-select"
+                                            aria-label="Default select example">
+                                            <option value="Paired" selected>Paired</option>
+                                            <option value="turbo">turbo</option>
+                                            <option value="twilight_shifted">twilight_shifted</option>
+                                            <option value="twilight">twilight</option>
+                                            <option value="cividis">cividis</option>
+                                            <option value="viridis">viridis</option>
+                                            <option value="plasma">plasma</option>
+                                            <option value="inferno">inferno</option>
+                                            <option value="magma">magma</option>
+                                            <option value="manual">Let me define my own palette</option>
+                                        </select>
+                                    </div>
+                                    <div class="row" id="div-color-palette-preview" style="display: none;">
+                                        <div class="col-md-12 mt-4 mb-4 mb-md-0">
+                                            <img src="{{ url_for('static', filename='img/Paired.png') }}"
+                                                id="img-color-palette-preview" width="100%" height="100%" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Color Palette: End-->
+                                <!-- Manual Color Palette-->
+                                <div class="row" id="div-manual-color-palette" style="display: none;">
+                                    <div class="col-md-4 mt-2 mb-4 mb-md-0">
+                                        <div class=" d-flex align-items-center">
+                                            <label for="colorPickerExterior" class="form-label">Exterior:</label>
+                                            <input type="color" id="colorPickerExterior"
+                                                colorpick-eyedropper-active="true" value="#ffffff" title="Exterior">
+                                        </div>
+                                        <div class="">
+                                            <!-- <label class="form-check-label" for="flexSwitchCheckExterior">Smooth</label> -->
+                                            <!-- <input class="form-check-input" type="checkbox" id="flexSwitchCheckExterior"> -->
+                                            <select id="select-exterior-color-palette" class="form-select"
+                                                aria-label="Default select example">
+                                                <option value="single" selected>Single Color</option>
+                                                <option value="shades">Color Shades</option>
+                                                <option value="complementary">Complementary Colors</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mt-2 mb-4 mb-md-0">
+                                        <div class=" d-flex align-items-center">
+                                            <label for="colorPickerGrayArea" class="form-label">Gray Area:</label>
+                                            <input type="color" id="colorPickerGrayArea"
+                                                colorpick-eyedropper-active="true" value="#ffff00" title="Gray Area">
+                                        </div>
+                                        <div class="">
+                                            <!-- <label class="form-check-label" for="flexSwitchCheckGrayArea">Smooth</label>
+                                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckGrayArea"> -->
+                                            <select id="select-gray-area-color-palette" class="form-select"
+                                                aria-label="Default select example">
+                                                <option value="single" selected>Single Color</option>
+                                                <option value="shades">Color Shades</option>
+                                                <option value="complementary">Complementary Colors</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mt-2 mb-4 mb-md-0">
+                                        <div class=" d-flex align-items-center">
+                                            <label for="colorPickerInterior" class="form-label">Interior:</label>
+                                            <input type="color" id="colorPickerInterior"
+                                                colorpick-eyedropper-active="true" value="#000000" title="Interior">
+                                        </div>
+                                        <div class="">
+                                            <!-- <label class="form-check-label" for="flexSwitchCheckInterior">Smooth</label>
+                                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckInterior"> -->
+                                            <select id="select-interior-color-palette" class="form-select"
+                                                aria-label="Default select example">
+                                                <option value="single" selected>Single Color</option>
+                                                <option value="shades">Color Shades</option>
+                                                <option value="complementary">Complementary Colors</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Manual Color Palette: End-->
+                                <!-- Gradient -->
+                                <div class="row" id="div-gradient" style="display: none;">
+                                    <div class="col-md-4 mt-2 mb-4 mb-md-0 form-check" style="padding-left: 2.5em;">
+                                        <input class="form-check-input" type="checkbox" value="" id="check-shuffle">
+                                        <label class="form-check-label" for="check-shuffle">
+                                            Shuffle
+                                        </label>
+                                    </div>
+                                    <div class="col-md-8 mt-2 mb-4 mb-md-0">
+                                        <select id="select-gradient" class="form-select"
+                                            aria-label="Default select example">
+                                            <option value="no-gradient" selected>No Gradient</option>
+                                            <option value="linear">Linear Gradient</option>
+                                            <option value="cubic">Cubic Gradient</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <!-- Gradient: End-->
+
+                                <!-- Viewport -->
+                                <div class="row">
+                                    <div class="col-md-2 mt-2 mb-4 mb-md-0">
+                                        <label class="form-label" for="check-shuffle">Viewport</label>
+                                    </div>
+                                    <div class="col-md-4 mt-2 mb-4 mb-md-0">
+                                        <select id="select-viewport" class="form-select" aria-label="Viewport View">
+                                            {% for preset_name, preset in default_presets.items() %}
+                                            <option value="{{ preset.name }}" {% if loop.first %} selected {% endif %}>
+                                                {{ preset.display_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mt-2 mb-4 mb-md-0">
+                                        <div class="row">
+                                            <div class="col-md-4"><label for="viewport-center-point"
+                                                    class="form-label">Center</label></div>
+                                            <div class="col-md-8">
+                                                <!-- <input type="text" class="form-control" id="viewport-center-point" placeholder="e.g. -0.7435 + 0.1314j"> -->
+                                                <input type="text" class="form-control" id="viewport-center-point"
+                                                    value='{{ default_presets.get("entire-fractal").center }}'
+                                                    placeholder='e.g. {{ default_presets.get("entire-fractal").center }}'>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4"><label for="viewport-width"
+                                                    class="form-label">Width</label></div>
+                                            <div class="col-md-8">
+                                                <input type="text" class="form-control" id="viewport-width"
+                                                    value='{{ default_presets.get("entire-fractal").width }}'
+                                                    placeholder='e.g. {{ default_presets.get("entire-fractal").width }}'>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4"><label for="viewport-width"
+                                                    class="form-label">Escape</label></div>
+                                            <div class="col-md-8">
+                                                <input type="text" class="form-control" id="viewport-iterations"
+                                                    value='{{ default_presets.get("entire-fractal").max_iterations }}'
+                                                    placeholder='e.g. {{ default_presets.get("entire-fractal").max_iterations }}'>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Viewport: End-->
+
+                                <div class="row"><!-- Spacer--> &nbsp;</div>
+                                <div class="row">
+                                    <button onclick="formInputOnChange(event)" class="file-uploader__submit-button"
+                                        id="mandelbrot">Generate</button>
+                                </div>
+
+                                <div class="row"><!-- Spacer--> &nbsp;</div>
+                                <!-- Guide -->
+                                <div class="row">
+                                    <div class="accordion" id="accordionExample">
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="headingOne">
+                                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                                    data-bs-target="#collapseOne" aria-expanded="true"
+                                                    aria-controls="collapseOne">
+                                                    How to use
+                                                </button>
+                                            </h2>
+                                            <div id="collapseOne" class="accordion-collapse collapse show"
+                                                aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                                <div class="accordion-body">
+                                                    You can choose between <strong>image types</strong> If you select
+                                                    <code>Color</code> you have many options: prebuilt color palettes or
+                                                    building your own palette. You <code>shuffle</code> the colors and
+                                                    apply <code>gradient</code>. Start with preset <strong>viewport
+                                                        view</strong>s then change <code>center</code> and
+                                                    <code>width</code> of the magnifying square. Consult <strong>pixel
+                                                        coordinates</strong> below. The bigger <code>escape</code>
+                                                    number the greater detail and more cpu cycles.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="headingTwo">
+                                                <button class="accordion-button collapsed" type="button"
+                                                    data-bs-toggle="collapse" data-bs-target="#collapseTwo"
+                                                    aria-expanded="false" aria-controls="collapseTwo">
+                                                    Pixel Coordinates
+                                                </button>
+                                            </h2>
+                                            <div id="collapseTwo" class="accordion-collapse collapse"
+                                                aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                                <div class="accordion-body">
+                                                    <figure class="figure">
+                                                        <img src="{{ url_for('static', filename='img/mandelbrot-graph.png') }}"
+                                                            class="figure-img img-fluid rounded" alt="...">
+                                                        <figcaption class="figure-caption">Mandelbrot set drawing pixel
+                                                            coordinates - <a
+                                                                href="https://github.com/HyveInnovate/mandelbrot-kata?tab=readme-ov-file"
+                                                                style="color:red" target="_blank">Image Source</a>
+                                                        </figcaption>
+                                                    </figure>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="headingThree">
+                                                <button class="accordion-button collapsed" type="button"
+                                                    data-bs-toggle="collapse" data-bs-target="#collapseThree"
+                                                    aria-expanded="false" aria-controls="collapseThree">
+                                                    References
+                                                </button>
+                                            </h2>
+                                            <div id="collapseThree" class="accordion-collapse collapse"
+                                                aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                                                <div class="accordion-body">
+                                                    <ul>
+                                                        <li>There is a great tutorial on <a
+                                                                href="https://realpython.com/mandelbrot-set-python/"
+                                                                target="_blank">realpython.com</a> which helped me build
+                                                            this from scratch</li>
+                                                        <li>This <a href="https://arachnoid.com/mandelbrot_set/"
+                                                                target="_blank">crazy website</a> will let you scroll
+                                                            into Mandelbrot with your browser</li>
+                                                        <li> Thank you <a
+                                                                href="https://www.marksmath.org/classes/DiscourseArchive/FractalLACFall2016/t/post-a-groovy-image-of-the-mandelbrot-set/73/"
+                                                                target="_blank">dcutchen</a> for the hypnotic spiral
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Guide: End-->
+                            </div>
+                        </div>
+                        <!--Form Input : End-->
+                    </div>
+                    <div class="col-sm-6">
+                        <!--Form Output -->
+                        <div class="card">
+                            <h5 class="card-header">Your Fractal Image</h5>
+                            <div class="card-img-top" id="card-fractal-image-output2">
+                                <img style="display: none;" width="100%" height="100%" id="img-2" name="img-2"
+                                    src="{{ url_for('static', filename='img/loading.gif') }}" />
+                            </div>
+                            <div class="card-body"></div>
+                        </div>
+                        <!--Upload Watermark Image : End -->
+                    </div>
+                </div>
+                <!-- Profile Tab Contents End-->
+            </div>
+            <!-- <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">Contact</div> -->
+        </div>
+    </div>
+    <div class="col-sm-6"></div>
+</div>
+
+<!-- Animations -->
+<script>
+    // Pulsate animation
+    function pulsate(selector){
+        $(selector).animate({ opacity: 0.5 }, "fast")
+            .animate({ opacity: 1 }, "fast")
+            .animate({ opacity: 0.5 }, "fast")
+            .animate({ opacity: 1 }, "fast");
+    }
+    // Highlight animation
+    function highlight(selector){
+        $(selector).effect("highlight", { color: "#2e55a1"}, 1000);
+    }
+    // Bounce animation
+    function bounce(selector){
+        $(selector).effect("bounce", { times: 3, distance: 15 }, 300);
+    }
+    // Shake animation
+    function shake(selector){
+        $(selector).effect("shake", { distance: 5, times: 3 }, 300);
+    }
+</script>
+
+<!-- Styles for image file thumbnails -->
+<style>
+    #image-thumbnail-preview-container {
+        margin-top: 5px;
+        padding: 5px;
+        display: flex;
+        overflow-x: auto; /* Enable horizontal scrolling */
+        white-space: nowrap; /* Prevent thumbnails from wrapping to the next line */
+    }
+    .results-container {
+        padding: 5px;
+        overflow: inherit;
+        width: 90%;
+        margin: auto;
+        margin-top: 5px;
+    }
+    .image-thumbnail-preview {
+        height: 100px; /* Set the height of thumbnails */
+        margin-right: 10px; /* Add some margin between thumbnails */
+    }
+</style>
+
+<!-- Custom Script for image file thumbnails -->
+<script>
+    // document.getElementById('image-files').addEventListener('change', handleFileSelect);
+
+    // function handleFileSelect(event) {
+    //     // const previewContainer = document.getElementById('image-thumbnail-preview-container');
+    //     // previewContainer.innerHTML = ''; // Clear previous previews
+    //     const previewContainer = $('#image-thumbnail-preview-container');
+    //     previewContainer.empty();
+
+    //     const files = event.target.files;
+
+    //     for (const file of files) {
+    //         if (file.type.startsWith('image/')) {
+    //             const reader = new FileReader();
+                
+    //             reader.onload = function (e) {
+    //                 var thumbnailContainerCard = $("<div class='container-extended'></div>");
+    //                 //Create image
+    //                 var thumbnailImage = $('<img class="image-thumbnail-preview" alt="'+file.name+'" src="'+e.target.result+'"/>');
+    //                 thumbnailContainerCard.append(thumbnailImage);
+    //                 //Create overlay file name
+    //                 var overlayFileName = $('<div class="overlay-extended"><div class="text-extended-small">'+file.name+'</div></div>');
+    //                 thumbnailContainerCard.append(overlayFileName);
+    //                 previewContainer.append(thumbnailContainerCard);
+    //             };
+    //             reader.readAsDataURL(file);
+    //         }
+    //     }
+    // }
+</script>
+
+<script>
+    var acceptedFileTypes = ["jpg", "jpeg", "png", "bmp", "gif", "tiff"];
+
+    $(window).on('load', function () {
+        // Your code here
+        console.log('Window has completely loaded!');
+        setUp();
+    });
+
+    function setUp() {
+        // Initially hide all components
+        $('.components').hide();
+        // Show the selected component when the dropdown changes
+        $('#operation-type').change(function () {
+            var selectedComponent = $(this).val();
+            $('.components').hide();
+            $('.components[data-component="' + selectedComponent + '"]').show();
+        });
+
+        document.getElementById('process-image').addEventListener('click', processImageButtonOnClick);
+        document.getElementById('image-files').addEventListener('input', fileInputOnChange);
+        document.getElementById('paletteSizeRangeInput').addEventListener('input', function () {
+            $('#paletteSizeRangeValue').text($("#paletteSizeRangeInput").val());
+        });
+    }
+
+    // Function to generate random text
+    function generateRandomText(length) {
+        const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        let randomText = "";
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * charset.length);
+            randomText += charset.charAt(randomIndex);
+        }
+        return randomText;
+    }
+
+    // Function to check if a value is a positive number
+    function isValidNumber(value) {
+        return !isNaN(value) & parseFloat(value) > 0;
+    }
+
+    // Function to validate required input for operation 
+    function validateOperationInput(operation_type) {
+        switch(operation_type) {
+            case "get-palette": break;
+            case "create-thumbnail": 
+                // Validate user input for WxH
+                var width = $('#thumbnail_width').val();
+                var height = $('#thumbnail_height').val();
+                if (!isValidNumber(width) && !isValidNumber(height)) {
+                    showDismissableAlert(
+                        $("#submit-results-container"), 
+                        "submit-results", 
+                        "alert-danger",
+                        "Please set at least one of the dimensions to a positive number"
+                    );
+                    return false;
+                }
+                break;
+            case "resize": 
+                // Validate user input for WxH
+                var width = $('#resize_width').val();
+                var height = $('#resize_height').val();
+                if (!isValidNumber(width) && !isValidNumber(height)) {
+                    showDismissableAlert(
+                        $("#submit-results-container"), 
+                        "submit-results", 
+                        "alert-danger",
+                        "Please set at least one of the dimensions to a positive number"
+                    );
+                    return false;
+                }
+                break;
+            case "blur": break;
+            case "rotate": break;
+            default: 
+                showDismissableAlert(
+                    $("#submit-results-container"), 
+                    "submit-results", 
+                    "alert-warning",
+                    "Please select a valid operation type"
+                );
+                return false;
+        }
+        return true;
+    }
+
+    function showDismissableAlert(parentElement, id, alert_type="alert-success", message){
+        // Clear 
+        parentElement.empty();
+        var elStr = '<div id="'+id+'" class="alert alert-dismissible fade show" role="alert">' +
+            message +
+            '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+            '</div>'
+        var divElement = $(elStr);
+        divElement.addClass(alert_type);
+        parentElement.append(divElement);
+        setTimeout(function () {
+            $("#"+id).fadeOut(1000);
+        }, 3000);
+    }
+
+    function processImageButtonOnClick(event) {
+        var sourceElement = event.target;
+        console.log(sourceElement);
+        src_element_id = sourceElement.id;
+
+        // Check if file selection is valid
+        var uploadAllowedCount = fileInputOnChange(null);
+        if (uploadAllowedCount == 0) {
+            showDismissableAlert(
+                $("#submit-results-container"), 
+                "submit-results", 
+                "alert-danger",
+                "Please select at least one supported file"
+            );
+            return false;
+        }
+
+        // Check input for operation type
+        var operation_type = $("#operation-type").val();
+        if(validateOperationInput(operation_type) == false) {
+            return false;
+        }
+
+        // Validations passed, now process user request
+        processImages();
+    }
+
+    function fileInputOnChange(event) {
+        var uploadAllowedCount = 0;
+        
+        // Clear thumbnails 
+        const previewContainer = $('#image-thumbnail-preview-container');
+        previewContainer.empty();
+        // Clear error messages
+        $(".invalid-input").text("");
+        
+        var target;
+        if(event === null) {
+            target = document.getElementById('image-files');
+        }else{
+            target = event.target;
+        }
+        const files = target.files;
+        for (const file of files) {
+            // If this is a known image file type`
+            if (file.type.startsWith('image/')) {
+                // Not all image types are accepted
+                var fileName = file.name.match(/([^\\\/]+)$/)[0];
+                var check = checkFileName(fileName, acceptedFileTypes);
+                // If this is an accepted type of image file 
+                if (check === "valid") {
+                    uploadAllowedCount += 1;
+                    // Now generate image thumbnails 
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        var id = generateRandomText(16);
+                        var thumbnailContainerCard = $('<div id="cont_'+id+'" class="container-extended"></div>');
+                        //Create image
+                        var thumbnailImage = $('<img id="'+id+'" class="image-thumbnail-preview" alt="'+file.name+'" src="'+e.target.result+'"/>');
+                        
+                        thumbnailImage.on('load', function(){
+                            // console.log($(this));
+                            var img_id = this.id;
+                            var text_id = "text_"+img_id;
+                            var wxh = "("+this.naturalWidth+"x"+this.naturalHeight+")";
+                            $('#'+text_id).html($('#'+text_id).text()+"<br/>"+wxh);
+                            // console.log("image wxh: "+this.naturalWidth+"x"+this.naturalHeight);
+                        });
+                        thumbnailContainerCard.append(thumbnailImage);
+                        //Create overlay file name
+                        var overlayFileName = $('<div class="overlay-extended"><div id="text_'+id+'" class="text-extended-small">'+file.name+'</div></div>');
+                        overlayFileName.click(function () {
+                            console.log( $(this));
+                            var selector = '.results-container[data-component="' + file.name + '"]';
+                            shake(selector);
+                            highlight(selector); 
+                        });
+                        thumbnailContainerCard.append(overlayFileName);
+                        previewContainer.append(thumbnailContainerCard);
+                        // console.log(thumbnailImage.width()+"x"+thumbnailImage.height());
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    // This type of image file type is rejected 
+                    errorText = file.name+" is not one of : " + acceptedFileTypes.join(", ");
+                    $(".invalid-input").append('<p>' + errorText + "</p>")
+                }
+            } else {
+                // Non-image file types are rejected 
+                errorText = file.name+" is not one of : " + acceptedFileTypes.join(", ");
+                $(".invalid-input").append('<p>' + errorText + "</p>")
+            }
+        }
+        return uploadAllowedCount;
+    }
+
+    function _fileInputOnChange(event) {
+        var acceptedFileTypes = ["jpg", "jpeg", "png", "bmp", "gif", "tiff"];
+        var uploadAllowed = false;
+
+        // Find selected files
+        var file = $("#file").prop("files")[0];
+        console.log(file);
+        if (file) {
+            var fileName = file.name.match(/([^\\\/]+)$/)[0];
+            console.log("File Name:" + fileName);
+
+            //validate the file
+            var check = checkFileName(fileName, acceptedFileTypes);
+            if (check === "valid") {
+                uploadAllowed = true;
+                $(".invalid-input").text("");
+            } else {
+                uploadAllowed = false;
+                //indicate that the file is not ok
+                var errorText = "Unable to open this file.";
+                if (check === "badFileName") {
+                    errorText = "Accepted file types: " + acceptedFileTypes.join(", ");
+                }
+                $(".invalid-input").append('<p>' + errorText + "</p>")
+
+            }
+        } else {
+            // cancelled
+            uploadAllowed = false;
+            $(".invalid-input").text("");
+        }
+        return uploadAllowed;
+    }
+
+    function processImages() {
+        //Display temporary loading image
+        var tempLoadingRow = $("#temp-loading-row");
+        var resultsDisplayRow = $("#results-display-row");
+        var resultsDisplayContainer = $("#results-display-container");
+
+        tempLoadingRow.show();
+        resultsDisplayRow.hide();
+        resultsDisplayRow.empty();
+
+        //upload file to get a thumbnail 
+        const formData = new FormData();
+        var submitURL;
+
+        submitURL = "{{ url_for('image_tools.process_image') }}";
+        formData.append('operation-type', $("#operation-type").val());
+        //operation: get-palette inputs
+        formData.append('palette-size', $("#paletteSizeRangeInput").val());
+        //operation: create-thumbnail inputs
+        formData.append('thumbnail-width', $("#thumbnail_width").val());
+        formData.append('thumbnail-height', $("#thumbnail_height").val());
+        //operation: resize inputs
+        formData.append('resize-width', $("#resize_width").val());
+        formData.append('resize-height', $("#resize_height").val());
+
+        // Add all supported files 
+        const files = document.getElementById('image-files').files;
+        for (const file of files) {
+            // If this is a known image file type`
+            if (file.type.startsWith('image/')) {
+                // Not all image types are accepted
+                var fileName = file.name.match(/([^\\\/]+)$/)[0];
+                var check = checkFileName(fileName, acceptedFileTypes);
+                // If this is an accepted type of image file 
+                if (check === "valid") {
+                    formData.append('files', file);
+                }
+            }
+        }
+        
+        console.log(formData);
+        fetch(submitURL, {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    tempLoadingRow.hide();
+                    for (var result of data.results) {
+                        // Create results and display
+                        var id = generateRandomText(16);
+                        var html = '<div class="border results-container" data-component="' + result.file_name + '">' + 
+                            '<label for="' + id + '" class="form-label">' + result.file_name + '</label><br/>' + 
+                            '<img alt="' + result.file_name + '" ' + result.image_attribute + ' ' + //'" width="100%" ' +
+                            'src="data:image/png;base64,' + result.image + '" id="' + id + '"/></div>'; 
+                        resultEl = $(html);
+                        resultsDisplayRow.append(resultEl);
+                    }
+                    resultsDisplayRow.show();
+                    // Show success message 
+                    showDismissableAlert(
+                        $("#submit-results-container"), 
+                        "submit-results", 
+                        "alert-success",
+                        data.description
+                    );
+                } else {
+                    console.error('Upload failed:', data.message);
+                    showDismissableAlert(
+                        $("#submit-results-container"), 
+                        "submit-results", 
+                        "alert-danger",
+                        "Upload failed:" + data.message
+                    );
+                }
+            })
+            .catch(error => {
+                console.error('Error during upload:', error);
+                showDismissableAlert(
+                    $("#submit-results-container"), 
+                    "submit-results", 
+                    "alert-danger",
+                    "Error during upload:" + error
+                );
+            });
+    }
+
+    function checkFileName(fileName, acceptedFileTypes) {
+        console.log("Accepted file types: " + acceptedFileTypes.join(", "))
+        var accepted = "invalid",
+            regex;
+
+        for (var i = 0; i < acceptedFileTypes.length; i++) {
+            regex = new RegExp("\\." + acceptedFileTypes[i] + "$", "i");
+
+            if (regex.test(fileName)) {
+                accepted = "valid";
+                break;
+            } else {
+                accepted = "badFileName";
+            }
+        }
+        return accepted;
+    }
+
+</script>
+
+{% endblock %}

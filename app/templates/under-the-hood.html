@@ -1,0 +1,46 @@
+{% extends 'base_template-v2.html' %}
+
+{% block title %}Welcome - Under the hood{% endblock %}
+
+{% block header %}Welcome{% endblock %}
+{% block header_text %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 mb-4 mb-md-0">
+            <span>&nbsp;</span>
+            <h3>Under the Hood 🛠️</h3>
+            <p>This Python-based<svg width="25px" height="25px" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M31.885 16c-8.124 0-7.617 3.523-7.617 3.523l.01 3.65h7.752v1.095H21.197S16 23.678 16 31.876c0 8.196 4.537 7.906 4.537 7.906h2.708v-3.804s-.146-4.537 4.465-4.537h7.688s4.32.07 4.32-4.175v-7.019S40.374 16 31.885 16zm-4.275 2.454c.771 0 1.395.624 1.395 1.395s-.624 1.395-1.395 1.395a1.393 1.393 0 0 1-1.395-1.395c0-.771.624-1.395 1.395-1.395z" fill="url(#a)"/><path d="M32.115 47.833c8.124 0 7.617-3.523 7.617-3.523l-.01-3.65H31.97v-1.095h10.832S48 40.155 48 31.958c0-8.197-4.537-7.906-4.537-7.906h-2.708v3.803s.146 4.537-4.465 4.537h-7.688s-4.32-.07-4.32 4.175v7.019s-.656 4.247 7.833 4.247zm4.275-2.454a1.393 1.393 0 0 1-1.395-1.395c0-.77.624-1.394 1.395-1.394s1.395.623 1.395 1.394c0 .772-.624 1.395-1.395 1.395z" fill="url(#b)"/><defs><linearGradient id="a" x1="19.075" y1="18.782" x2="34.898" y2="34.658" gradientUnits="userSpaceOnUse"><stop stop-color="#387EB8"/><stop offset="1" stop-color="#366994"/></linearGradient><linearGradient id="b" x1="28.809" y1="28.882" x2="45.803" y2="45.163" gradientUnits="userSpaceOnUse"><stop stop-color="#FFE052"/><stop offset="1" stop-color="#FFC331"/></linearGradient></defs></svg>sample application can be accessed on its GitHub <i class="fa-brands fa-github"></i> repository [link]. The application is containerized (refer to the Dockerfile <svg width="20px" height="20px" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="16" cy="16" r="14" fill="#1794D4"/>
+                <path d="M18 7H16V9H18V7Z" fill="white"/>
+                <path d="M10 10H12V12H10V10Z" fill="white"/>
+                <path d="M6.00155 16.9414C6.17244 19.8427 7.90027 24 14 24C20.8 24 23.8333 19 24.5 16.5C25.3333 16.5 27.2 16 28 14C27.5 13.5 25.5 13.5 24.5 14C24.5 13.2 24 11.5 23 11C22.3333 11.6667 21.3 13.4 22.5 15C22 16 20.6667 16 20 16H6.9429C6.41342 16 5.97041 16.4128 6.00155 16.9414Z" fill="white"/>
+                <path d="M9 13H7V15H9V13Z" fill="white"/>
+                <path d="M10 13H12V15H10V13Z" fill="white"/>
+                <path d="M15 13H13V15H15V13Z" fill="white"/>
+                <path d="M16 13H18V15H16V13Z" fill="white"/>
+                <path d="M21 13H19V15H21V13Z" fill="white"/>
+                <path d="M15 10H13V12H15V10Z" fill="white"/>
+                <path d="M16 10H18V12H16V10Z" fill="white"/></svg> in the repository), and the container image is stored in a container registry. To minimize management overhead, the image is deployed on serverless container instances within a private subnet, ensuring automatic restart in case of failure.</p>
+            <p>To add a touch of flair, a public load balancer serves as the entry point to the application 🚀. HTTPS listeners on the load balancer utilize Let's Encrypt certificates <i class="fa-brands fa-expeditedssl"></i> for secure communication 🔒. Cloudflare DNS <svg width="20px" height="20px" viewBox="0 -70 256 256" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid"><g><g transform="translate(0.000000, -1.000000)">
+                        <path d="M202.3569,50.394 L197.0459,48.27 C172.0849,104.434 72.7859,70.289 66.8109,86.997 C65.8149,98.283 121.0379,89.143 160.5169,91.056 C172.5559,91.639 178.5929,100.727 173.4809,115.54 L183.5499,115.571 C195.1649,79.362 232.2329,97.841 233.7819,85.891 C231.2369,78.034 191.1809,85.891 202.3569,50.394 Z" fill="#FFFFFF"></path><path d="M176.332,109.3483 C177.925,104.0373 177.394,98.7263 174.739,95.5393 C172.083,92.3523 168.365,90.2283 163.585,89.6973 L71.17,88.6343 C70.639,88.6343 70.108,88.1033 69.577,88.1033 C69.046,87.5723 69.046,87.0413 69.577,86.5103 C70.108,85.4483 70.639,84.9163 71.701,84.9163 L164.647,83.8543 C175.801,83.3233 187.486,74.2943 191.734,63.6723 L197.046,49.8633 C197.046,49.3313 197.577,48.8003 197.046,48.2693 C191.203,21.1823 166.772,0.9993 138.091,0.9993 C111.535,0.9993 88.697,17.9953 80.73,41.8963 C75.419,38.1783 69.046,36.0533 61.61,36.5853 C48.863,37.6473 38.772,48.2693 37.178,61.0163 C36.647,64.2033 37.178,67.3903 37.71,70.5763 C16.996,71.1073 0,88.1033 0,109.3483 C0,111.4723 0,113.0663 0.531,115.1903 C0.531,116.2533 1.593,116.7843 2.125,116.7843 L172.614,116.7843 C173.676,116.7843 174.739,116.2533 174.739,115.1903 L176.332,109.3483 Z" fill="#F4811F"></path><path d="M205.5436,49.8628 L202.8876,49.8628 C202.3566,49.8628 201.8256,50.3938 201.2946,50.9248 L197.5766,63.6718 C195.9836,68.9828 196.5146,74.2948 199.1706,77.4808 C201.8256,80.6678 205.5436,82.7918 210.3236,83.3238 L229.9756,84.3858 C230.5066,84.3858 231.0376,84.9168 231.5686,84.9168 C232.0996,85.4478 232.0996,85.9788 231.5686,86.5098 C231.0376,87.5728 230.5066,88.1038 229.4436,88.1038 L209.2616,89.1658 C198.1076,89.6968 186.4236,98.7258 182.1746,109.3478 L181.1116,114.1288 C180.5806,114.6598 181.1116,115.7218 182.1746,115.7218 L252.2826,115.7218 C253.3446,115.7218 253.8756,115.1908 253.8756,114.1288 C254.9376,109.8798 255.9996,105.0998 255.9996,100.3188 C255.9996,72.7008 233.1616,49.8628 205.5436,49.8628" fill="#FAAD3F"></path></g></g></svg> is configured, and Full Strict SSL is enforced from the client's browser to the origin server, which, in this case, is the load balancer.</p>
+            <p>Access to both the backend servers and the load balancer is restricted using network security groups 🔐. For a comprehensive overview of the architecture, refer to the diagram on the right <i class="fa-solid fa-network-wired"></i>, explore the source code on GitHub<i class="fa-brands fa-github"></i>, and visit my blog for a detailed explanation 📝. </p>
+            <h5>Happy coding! <i class="fa-solid fa-heart" style="color: red;"></i> </h5>
+
+            <!-- <button onclick="navigateToSplitPDF()" class="file-uploader__submit-button">Let's split a PDF file</button> -->
+            <script>
+                function navigateToSplitPDF() {
+                    window.location.href = "{{ url_for('split_pdf.index') }}";
+                }
+            </script>
+        </div>
+        <div class="col-md-7 ms-auto">
+            <a href="{{ url_for('static', filename='img/pdf-magic-oci.jpg') }}">
+                <img class="img-thumbnail thumbnail-extended-white" src="{{ url_for('static', filename='img/pdf-magic-oci.jpg') }}" class="d-block w-100" alt="...">
+            </a>
+        </div>
+    </div>
+</div>
+<!-- Add dashboard-specific content here -->
+{% endblock %}
