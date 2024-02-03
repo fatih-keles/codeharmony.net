@@ -15,8 +15,6 @@ build/
 *.egg-info/
 templates/Oracle.tpl
 images/
-*.sh
-*/*.sh
 ssl/
 .dockerignore
 .env
