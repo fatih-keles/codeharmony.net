@@ -18,4 +18,4 @@ images/
 ssl/
 .dockerignore
 .env
-sil.*
+sil.txt
