@@ -1,0 +1,592 @@
+{% extends 'base_template-v2.html' %}
+
+{% block title %}Welcome - Generate Abstract Images{% endblock %}
+
+{% block header %}Welcome{% endblock %}
+{% block header_text %}{% endblock %}
+
+{% block content %}
+
+<style>
+    r {
+        display: inline;
+        color: red;
+    }
+    g {
+        display: inline;
+        color: rgb(4, 255, 4);
+    }
+    y {
+        display: inline;
+        color: yellow;
+    }
+
+    /* Custom CSS for Console Display */
+    .console-container {
+        font-size: x-small;
+        /* height: 300px; */
+        overflow-y: auto;
+        /* Enable vertical scrolling */
+        font-family: monospace;
+        /* Use monospace font for console-like appearance */
+        min-height: 50px;
+        /* Minimum height */
+        max-height: 300px;
+        /* Maximum height */
+        overflow-y: auto;
+        /* Enable vertical scrolling */
+    }
+
+    .console-line {
+        white-space: pre-wrap;
+        /* Preserve formatting and wrap text */
+    }
+
+    .box {
+        min-height: 100px;
+        /* Minimum height */
+        max-height: 300px;
+        /* Maximum height */
+        overflow-y: auto;
+        /* Enable vertical scrolling */
+    }
+    .clipped-image {
+        width: 100%; /* Set the desired width */
+        height: 300px; /* Set the desired height */
+        object-position: top;
+        object-fit: cover; /* Scale the image to maintain its aspect ratio while filling the element's content box */
+        overflow: hidden; /* Clip the content that overflows the element's box */
+    }
+</style>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="row">
+            <div class="col-sm-6">
+                <!--Form Input -->
+                <div class="card ">
+                    <h5 class="card-header">Input Variables</h5>
+                    <div class="card-body">
+                        <div class="row m-1">
+                            <div class="col-md-2 mb-4 mb-md-0 align-middle">
+                                <label for="URLInput" class="form-label">URL</label>
+                            </div>
+                            <div class="col-md-10 mb-4 mb-md-0">
+                                <input type="text" class="form-control" id="URLInput"
+                                    placeholder="https://youtu.be/gxm_FuBAAus">
+                            </div>
+                        </div>
+
+                        <div class="row"><!-- Spacer--> &nbsp;</div>
+                        <div class="row m-1">
+                            <button onclick="summarizeButtonClicked(event)" class="file-uploader__submit-button"
+                                id="punch">Summarize</button>
+                        </div>
+
+                        <div class="row"><!-- Spacer--> &nbsp;</div>
+                        <div class="row m-1 " id="">
+                            <div class="card-header">Console Log</div>
+                            <div id="log-container"
+                                class="border border-dark bg-dark text-white text-wrap font-monospace console-container">
+                                <!-- Log messages will appear here -->
+                            </div>
+                        </div>
+
+                        <div class="row"><!-- Spacer--> &nbsp;</div>
+                        <!-- Guide -->
+                        <div class="row">
+                            <div class="accordion" id="accordionExample1">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingOne1">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#collapseOne1" aria-expanded="true"
+                                            aria-controls="collapseOne1">
+                                            How to use
+                                        </button>
+                                    </h2>
+                                    <div id="collapseOne1" class="accordion-collapse collapse show"
+                                        aria-labelledby="headingOne1" data-bs-parent="#accordionExample1">
+                                        <div class="accordion-body">
+                                            You can copy and paste <img src="{{ url_for('static', filename='img/youtube-32x32.png') }}"/> <code>YouTube</code> video <code>URL</code>,
+                                            it will extract <code>video_id</code> and use
+                                            <code><a class="text-reset" href="https://pypi.org/project/youtube-transcript-api/" target="_blank">YouTube Transcript API</a></code> to 
+                                            get the video transcript in English. Support for other languages can be added, even on-the-fly
+                                            translation is possible. If the transcript is not available, it will show an error message. <br><br>
+                                            
+                                            You can also provide any <img src="{{ url_for('static', filename='img/web-link-32x32.png') }}"/> <code>Web URL</code>, it will extract the text 
+                                            and summarize it using <code>AsyncHtmlLoader</code> and <code>Html2TextTransformer</code><br><br>
+
+                                            <img src="{{ url_for('static', filename='img/pdf-32x32.png') }}"/> <code>PDF</code> URLs are now supported! It uses <code>PyPDFLoader</code> and 
+                                            some custom logic to reduce documents to fit in the LLM context window. 
+                                            <br><br>
+
+                                            If the <code>text</code> to be summarized fits in the <code>LLM context window</code> it is directly
+                                            summarized. If it is too long, it will be split into chunks, each chuck is summarized and then combined. 
+                                            This approach is called <code>Map Reduce</code>.<br><br>
+
+                                            I am using <code><a class="text-reset" href="https://python.langchain.com/" target="_blank">🦜️🔗 LangChain</a></code> to
+                                            steer the process,
+                                            <code><a class="text-reset" href="https://flask-socketio.readthedocs.io/en/latest/getting_started.html" target="_blank">SocketIO</a></code> 
+                                            for streaming logs and LLM output
+                                            in realtime.<br><br>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingThree1">
+                                        <button class="accordion-button collapsed" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#collapseThree1"
+                                            aria-expanded="false" aria-controls="collapseThree1">
+                                            References
+                                        </button>
+                                    </h2>
+                                    <div id="collapseThree1" class="accordion-collapse collapse"
+                                        aria-labelledby="headingThree1" data-bs-parent="#accordionExample1">
+                                        <div class="accordion-body">
+                                            <ul>
+                                                <li><a href="https://flask-socketio.readthedocs.io/en/latest/getting_started.html"
+                                                        target="_blank">flask-socketio </a></li>
+                                                <li><a href="https://pypi.org/project/youtube-transcript-api/"
+                                                        target="_blank">youtube-transcript-api </a></li>
+                                                <li><a href="https://blog.langchain.dev/llms-to-improve-documentation/"
+                                                        target="_blank">LangChain Blog: Analyzing User Interactions with
+                                                        LLMs to Improve our Documentation</a></li>
+                                            </ul>
+                                            <p style="font-size: smaller;"><a href="https://www.flaticon.com/free-icons/youtube" title="youtube icons">Youtube, PDF and Web Link icons created by Freepik - Flaticon</a></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Guide: End-->
+                    </div>
+                </div>
+                <!--Form Input : End-->
+            </div>
+            <div class="col-sm-6">
+                <!--Form Output -->
+                <div class="card">
+                    <h5 class="card-header">Your Summary</h5>
+                    <div class="card-img-top" id="card-fractal-image-output">
+                        <img style="display: none;" width="100%" height="100%" id="img-1" name="img-1"
+                            src="{{ url_for('static', filename='img/loading.gif') }}" />
+                    </div>
+                    <div class="card-body">
+                        <div class="row m-1" id="submit-thumbnail-container">
+                            <!-- <img src="https://img.youtube.com/vi/y2cRcOPHL_U/mqdefault.jpg" /> -->
+                            <img class="clipped-image" style="display: none;" id="submit-thumbnail-image" name="submit-thumbnail-image" src="{{ url_for('static', filename='img/loading.gif') }}" />
+                        </div>
+                        <div class="row m-1" id="submit-results-container">
+                            <div class="border bg-light text-dark text-wrap pt-2 pb-2 font-monospace" id="summarizedText"></div>
+                        </div>
+
+                    </div>
+                </div>
+                <!--Upload Watermark Image : End -->
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-sm-6"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+<script>
+    $(window).on('load', function () {
+        // Your code here
+        console.log('Window has completely loaded!');
+        setUp();
+    });
+
+    function setUp() {
+        document.getElementById('URLInput').addEventListener('change', URLInputOnChange);
+
+        // var socket = io.connect('http://' + document.domain + ':' + location.port);
+        var socket = io.connect();
+        socket.on('log', function (data) {
+            consoleContainer = $('#log-container');
+            consoleContainer.append('<span class="console-line">' + data + '</span><br>');
+            consoleContainer.scrollTop(consoleContainer.prop('scrollHeight'));
+        });
+        socket.on('token', function (data) {
+            consoleContainer = $('#log-container');
+            consoleContainer.append(data);
+            consoleContainer.scrollTop(consoleContainer.prop('scrollHeight'));
+        });
+        socket.on('output', function (data) {
+            $('#summarizedText').append(data);
+        });
+    }
+
+    function refreshImageSrc() {
+        console.log("Refreshing Image Src");
+        var img = $("#submit-thumbnail-image");
+        var imageUrl = img.attr('src');
+        img.hide();
+        img.attr('src', '');
+        img.attr('src', imageUrl);
+        img.show();
+        // setTimeout(refreshImageSrc, 1000);
+    }
+
+    function URLInputOnChange(event) {
+        console.log($('#URLInput').val());
+        var URLInput = $('#URLInput').val();
+        var img = $("#submit-thumbnail-image");
+        img.hide();
+        $('#summarizedText').empty();
+        $('#log-container').empty();
+        if (URLInput.trim() == "") {
+            return;
+        }
+
+        //call backend to get a thumbnail image
+        const formData = new FormData();
+        var submitURL = "{{ url_for('llm_tools.get_thumbnail_image') }}";
+        formData.append("URLInput", URLInput);
+        // $('#summarizedText').empty();
+        // $('#log-container').empty();
+        console.log(formData);
+        fetch(submitURL, {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log("data.status:" + data.status);
+                if (data.status === 'success') {
+                    if (["youtube", "pdf", "webpage"].includes(data.resource_type)) {
+                    // if (data.resource_type == "youtube") {
+                        // console.log("YouTube Video Thumbnail:" + data.thumbnail);
+                        img.attr('src', data.thumbnail_uri);
+                        img.show();
+                        // setTimeout(refreshImageSrc, 5000); // 5000 milliseconds = 5 seconds
+                    }
+                } else {
+                    console.error('Could not get thumbnail:', data.description);
+                    img.hide();
+                }
+            })
+            .catch(error => {
+                console.error('Error while getting thumbnail:', error);
+                img.hide();
+            });
+    }
+
+    function summarizeButtonClicked(event) {
+        $('#summarizedText').empty();
+        $('#log-container').empty();
+        console.log($('#URLInput').val())
+        // $('#URLInput').empty();
+        var URLInput = $('#URLInput').val();
+        if (URLInput.trim() == "") {
+            showDismissableAlert(
+                $("#submit-results-container"),
+                "submit-results",
+                "alert-danger",
+                "Not a valid URL"
+            );
+            return;
+        }
+        //call backend to summarize the text
+        const formData = new FormData();
+
+        var submitURL = "{{ url_for('llm_tools.get_summarized_text') }}";
+        formData.append("URLInput", URLInput);
+        // $("#img-1").show();
+
+        //formData.append('file', file);
+        console.log(formData);
+        fetch(submitURL, {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log("data.status:" + data.status);
+                if (data.status === 'success') {
+                    console.log("Transcript List:" + data.transcript_text);
+                    //$('#youtubeVideoTranscript').text(data.transcript_text); 
+                } else {
+                    console.error('Upload failed:', data.description);
+                    showDismissableAlert(
+                        $("#submit-results-container"),
+                        "submit-results",
+                        "alert-danger",
+                        data.description
+                    );
+                }
+                // $("#img-1").hide();
+            })
+            .catch(error => {
+                console.error('Error during upload:', error);
+                showDismissableAlert(
+                    $("#submit-results-container"),
+                    "submit-results",
+                    "alert-danger",
+                    error
+                );
+                // $("#img-1").hide();
+            });
+    }
+
+    function updateCenterWidthEscape(event) {
+        var selectedViewportKey = $("#select-viewport").val();
+        console.log("selectedViewportKey:" + selectedViewportKey);
+        $("#viewport-center-point").val(defaultPresets[selectedViewportKey].center);
+        $("#viewport-width").val(defaultPresets[selectedViewportKey].width);
+        $("#viewport-iterations").val(defaultPresets[selectedViewportKey].max_iterations);
+    }
+
+    function showColorPalette(event) {
+        var image_type = $("#select-image-type").val();
+        if (image_type == "color") {
+            $("#div-color-palette").show();
+            // if ($("#select-color-palette").val() != "manual"){
+            //     $("#div-color-palette-preview").show();
+            // }
+            showSelectedColorPalettePreview(event);
+            $("#div-gradient").show();
+        } else {
+            $("#div-color-palette").hide();
+            $("#div-color-palette-preview").hide();
+            $("#div-manual-color-palette").hide();
+            $("#div-gradient").hide();
+        }
+    }
+
+    function showSelectedColorPalettePreview(event) {
+        var palette = $("#select-color-palette").val();
+        var base_url = "{{ url_for('static', filename='img/') }}";
+        console.log("selected palette:" + palette);
+        if (palette && palette.trim() !== "") {
+            img_url = base_url + palette + ".png";
+            console.log("img_url:" + img_url);
+            if (palette == "manual") {
+                //hide palette preview image
+                $("#div-color-palette-preview").hide();
+                $("#img-color-palette-preview").attr("src", base_url + "None.png");
+                //show manual palette color pickers
+                $("#div-manual-color-palette").show();
+            } else {
+                //show palette preview image
+                $("#img-color-palette-preview").attr("src", img_url);
+                $("#div-color-palette-preview").show();
+                //hide manual palette color pickers
+                $("#div-manual-color-palette").hide();
+            }
+        }
+    }
+
+    function showHidePunchColors(event) {
+        console.log("flexSwitchCheckDefault value:" + $("#flexSwitchCheckDefault").is(":checked"));
+        if ($("#flexSwitchCheckDefault").is(":checked")) {
+            $("#punch-color-row").hide();
+            $("#use-random-colors-row").hide();
+        } else {
+            $("#punch-color-row").show();
+            $("#use-random-colors-row").show();
+        }
+    }
+
+    function showHidePunchColors2(event) {
+        console.log("check-use-random value:" + $("#check-use-random").is(":checked"));
+        if ($("#check-use-random").is(":checked")) {
+            $("#punch-color-row").hide();
+            $("#use-complementary-colors-row").hide();
+        } else {
+            $("#punch-color-row").show();
+            $("#use-complementary-colors-row").show();
+        }
+    }
+
+    function updateValueLabelText(event) {
+        $('#rangeValue').text($("#rangeInput").val());
+        $('#colorPickerValue').text($("#colorPicker").val());
+        $('#colorPickerValue2').text($("#colorPicker2").val());
+    }
+
+    function formInputOnChange(event) {
+        var sourceElement = event.target;
+        image_type = sourceElement.id;
+        if (image_type == "punch") {
+            // Set Values
+            $('#rangeValue').text($("#rangeInput").val());
+            console.log("rangeInput value:" + $("#rangeInput").val());
+            $('#colorPickerValue').text($("#colorPicker").val());
+            console.log("colorPicker value:" + $("#colorPicker").val())
+        }
+        if (image_type == "mandelbrot") {
+
+        }
+        getThumbnailImage(image_type);
+    }
+
+    function fileInputOnChange(event) {
+        var sourceElement = event.target;
+        var acceptedFileTypes = {
+            "watermark-image-file": ["jpg", "jpeg", "png", "bmp", "gif", "tiff"],
+            "watermark-pdf-file": ["pdf"]
+        };
+        var divElement = $("#card-" + sourceElement.id);
+        var svgElement = $("#svg-" + sourceElement.id);
+        var cardTextElement = $("#card-text-" + sourceElement.id);
+        var imgElement = $("#img-" + svgElement.attr("id"));
+
+        console.log("sourceElement.id: " + sourceElement.id);
+        console.log("svgElement.id: " + $("#svg-" + sourceElement.id).attr("id"));
+
+        //clear everything
+        $(".flash-messages").empty();
+        cardTextElement.removeClass("error");
+        cardTextElement.text("");
+        imgElement.hide();
+        svgElement.show();
+
+        // Find selected files
+        var file = $("#" + sourceElement.id).prop("files")[0];
+        console.log(file);
+        var fileName = file.name.match(/([^\\\/]+)$/)[0];
+        console.log("File Name:" + fileName);
+
+        //validate the file
+        var check = checkFileName(fileName, acceptedFileTypes[sourceElement.id]);
+        if (check === "valid") {
+            console.log("Upload file to get a thumbnail image")
+            // uploadAllowed = true;
+            getThumbnailImage(file, divElement, svgElement);
+        } else {
+            //indicate that the file is not ok
+            cardTextElement.addClass("error");
+            var errorText = "Unable to open this file.";
+            if (check === "badFileName") {
+                errorText = "Unsupported file type, only following supported: " + acceptedFileTypes[sourceElement.id].join(', ');
+            }
+            cardTextElement.text(errorText)
+        }
+    }
+
+    function getThumbnailImage(image_type) {
+        //Create a temporary loading image
+        var tempLoadingImage;
+        if (image_type == "punch") {
+            tempLoadingImage = $("#img-1");
+        }
+        if (image_type == "mandelbrot") {
+            tempLoadingImage = $("#img-2");
+        }
+        tempLoadingImage.hide();
+        tempLoadingImage.attr('src', "{{ url_for('static', filename='img/loading.gif') }}");
+        //tempLoadingImage.classList.add("image-extended");
+        tempLoadingImage.show();
+
+        //upload file to get a thumbnail 
+        const formData = new FormData();
+        var submitURL;
+        if (image_type == "punch") {
+            submitURL = "{{ url_for('image_tools.get_punch') }}";
+            formData.append("depth", $("#rangeInput").val());
+            formData.append("bgcolor", $("#colorPicker").val());
+            formData.append("fgcolor", $("#colorPicker2").val());
+            formData.append("usecompcolor", $("#flexSwitchCheckDefault").is(":checked"));
+            formData.append("userandomcolor", $("#check-use-random").is(":checked"));
+        }
+        if (image_type == "mandelbrot") {
+            submitURL = "{{ url_for('image_tools.get_mandelbrot') }}";
+            // formData.append("imgtype", $("input[name='imageType']:checked").val());
+            formData.append("imgtype", $("#select-image-type").val());
+            formData.append("colormap_name", $("#select-color-palette").val());
+            formData.append("cmexterior", $("#colorPickerExterior").val());
+            formData.append("cmexterior_smooth", $("#select-exterior-color-palette").val());
+
+            formData.append("cminterior", $("#colorPickerInterior").val());
+            formData.append("cminterior_smooth", $("#select-interior-color-palette").val());
+
+            formData.append("cmgray", $("#colorPickerGrayArea").val());
+            formData.append("cmgray_smooth", $("#select-gray-area-color-palette").val());
+            formData.append("shuffle", $("#check-shuffle").is(":checked"));
+            formData.append("gradient", $("#select-gradient").val());
+
+            formData.append("selectedview", $("#select-viewport").val());
+            formData.append("centerpoint", $("#viewport-center-point").val());
+            formData.append("width", $("#viewport-width").val());
+            formData.append("iterations", $("#viewport-iterations").val());
+        }
+
+        //formData.append('file', file);
+        console.log(formData);
+        fetch(submitURL, {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    tempLoadingImage.hide();
+                    tempLoadingImage.attr('src', "data:image/png;base64," + data.image);
+                    console.log("Image updated:" + data.image.length);
+                    tempLoadingImage.show();
+                } else {
+                    console.error('Upload failed:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error during upload:', error);
+            });
+    }
+
+    function createImage(imageId, imageSource) {
+        //Create Image and return
+        const thumbnail = document.createElement('img');
+        thumbnail.id = imageId;
+        thumbnail.name = imageId;
+        thumbnail.src = imageSource;
+        thumbnail.width = "100%";
+        thumbnail.height = "100%";
+        // thumbnail.className = 'thumbnail-extended-white';
+        return thumbnail;
+    }
+
+    function checkFileName(fileName, acceptedFileTypes) {
+        console.log("Accepted file types: " + acceptedFileTypes.join(", "))
+        var accepted = "invalid",
+            //acceptedFileTypes = ["pdf"],
+            regex;
+
+        for (var i = 0; i < acceptedFileTypes.length; i++) {
+            regex = new RegExp("\\." + acceptedFileTypes[i] + "$", "i");
+
+            if (regex.test(fileName)) {
+                accepted = "valid";
+                break;
+            } else {
+                accepted = "badFileName";
+            }
+        }
+        return accepted;
+    }
+
+    function checkFileName2(fileName) {
+        var accepted = "invalid",
+            acceptedFileTypes = ["pdf"],
+            regex;
+
+        for (var i = 0; i < acceptedFileTypes.length; i++) {
+            regex = new RegExp("\\." + acceptedFileTypes[i] + "$", "i");
+
+            if (regex.test(fileName)) {
+                accepted = "valid";
+                break;
+            } else {
+                accepted = "badFileName";
+            }
+        }
+        return accepted;
+    }
+
+    function downloadWatermarkedFile() {
+        $("#file-uploader__form").submit();
+    }
+</script>
+
+{% endblock %}

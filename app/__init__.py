@@ -5,6 +5,26 @@ import secrets
 app = Flask(__name__)
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', secrets.token_hex(32))
 
+from flask_socketio import SocketIO
+socketio = SocketIO(app, cors_allowed_origins="*")
+
+@socketio.on('connect')
+def handle_connect():
+    print('Client connected')
+    
+@socketio.on('disconnect')
+def handle_disconnect():
+    print('Client disconnected')
+
+def stream_output(message):
+    socketio.emit('output', message)
+    
+def stream_log(message):
+    socketio.emit('log', message)
+    
+def stream_token(message):
+    socketio.emit('token', message)
+
 # Import your routes after creating the Flask app instance
 from app import routes
 
@@ -31,3 +51,10 @@ app.register_blueprint(watermark_pdf_bp)
 # Import and register the image_tools blueprint
 from app.modules.image_tools.routes import image_tools_bp
 app.register_blueprint(image_tools_bp)
+
+# Import and register the llm_tools blueprint
+from app.modules.llm_tools.routes import llm_tools_bp
+app.register_blueprint(llm_tools_bp)
+llm_tools_bp.stream_log = stream_log
+llm_tools_bp.stream_output = stream_output
+llm_tools_bp.stream_token = stream_token

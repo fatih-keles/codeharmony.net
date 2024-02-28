@@ -26,10 +26,10 @@
                 </span>
                 <span class="text">Let's split a PDF file</span>
             </a> -->
-            <button onclick="navigateToSplitPDF()" class="file-uploader__submit-button">Let's split a PDF file</button>
+            <button onclick="navigateToMandelbrot()" class="file-uploader__submit-button">Let's have some fun!</button>
             <script>
-                function navigateToSplitPDF() {
-                    window.location.href = "{{ url_for('split_pdf.index') }}";
+                function navigateToMandelbrot() {
+                    window.location.href = "{{ url_for('image_tools.fractal') }}";
                 }
             </script>
         </div>

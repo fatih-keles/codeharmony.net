@@ -48,6 +48,47 @@
 
 <body>
 
+  <!-- Animations -->
+<script>
+  // Pulsate animation
+  function pulsate(selector){
+      $(selector).animate({ opacity: 0.5 }, "fast")
+          .animate({ opacity: 1 }, "fast")
+          .animate({ opacity: 0.5 }, "fast")
+          .animate({ opacity: 1 }, "fast");
+  }
+  // Highlight animation
+  function highlight(selector){
+      $(selector).effect("highlight", { color: "#2e55a1"}, 1000);
+  }
+  // Bounce animation
+  function bounce(selector){
+      $(selector).effect("bounce", { times: 3, distance: 15 }, 300);
+  }
+  // Shake animation
+  function shake(selector){
+      $(selector).effect("shake", { distance: 5, times: 3 }, 300);
+  }
+</script>
+
+<script>
+    // Show dismissable alert
+  function showDismissableAlert(parentElement, id, alert_type="alert-success", message){
+    // Clear 
+    parentElement.empty();
+    var elStr = '<div id="'+id+'" class="alert alert-dismissible fade show" role="alert">' +
+      message +
+      '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+      '</div>'
+    var divElement = $(elStr);
+    divElement.addClass(alert_type);
+    parentElement.append(divElement);
+    setTimeout(function () {
+        $("#"+id).fadeOut(1000);
+      }, 3000);
+  }
+</script>
+
   <!-- ======= Header ======= -->
   <header id="header" class="fixed-top d-flex align-items-center">
     <div class="container d-flex justify-content-between align-items-center">
@@ -92,6 +133,14 @@
             </ul>
           </li>
           <!--Dropdown Menu for Image Tools:End-->
+
+          <!--Dropdown Menu for LLM Tools-->
+          <li class="dropdown"><a href="#"><span>AI/ML Tools</span> <i class="bi bi-chevron-down"></i></a>
+            <ul>
+              <li><a href="{{ url_for('llm_tools.summarize') }}">Summarize (Video, PDF, URL)</a></li>
+            </ul>
+          </li>
+          <!--Dropdown Menu for LLM Tools:End-->
 
           <li><a href="https://oci-daily.blogspot.com/">Blog</a></li>
           <li><a href="https://www.linkedin.com/in/fatihkeles/">Contact</a></li>
@@ -155,7 +204,7 @@
   <footer class="footer" role="contentinfo">
     <div class="container">
       <div class="row">
-        <div class="col-md-4 mb-4 mb-md-0">
+        <div class="col-md-2 mb-4 mb-md-0">
           <h3>About Me</h3>
           <p>I am a technology enthuisast with many hats and this is a small side project to explore
             possibilities and test my knowledge while working on interesting new stuff. </p>
@@ -167,7 +216,7 @@
         <div class="col-md-8 ms-auto">
           <div class="row site-section pt-0">
             <!--Main-->
-            <div class="col-md-4 mb-4 mb-md-0">
+            <div class="col-md-2 mb-2 mb-md-0">
               <h3>Navigation</h3>
               <ul class="list-unstyled">
                 <li><a href="{{ url_for('index') }}">Home</a></li>
@@ -178,7 +227,7 @@
               </ul>
             </div>
             <!--PDF Tools-->
-            <div class="col-md-4 mb-4 mb-md-0">
+            <div class="col-md-2 mb-2 mb-md-0">
               <h3>PDF Tools</h3>
               <ul class="list-unstyled">
                 <li><a href="{{ url_for('merge_pdf.index') }}">Merge PDFs</a></li>
@@ -189,11 +238,19 @@
               </ul>
             </div>
             <!--Image Tools-->
-            <div class="col-md-4 mb-4 mb-md-0">
+            <div class="col-md-2 mb-2 mb-md-0">
               <h3>Image Tools</h3>
               <ul class="list-unstyled">
                 <li><a href="{{ url_for('image_tools.fractal') }}">Fractals</a></li>
                 <li><a href="{{ url_for('image_tools.image') }}">Color Palette</a></li>
+              </ul>
+            </div>
+            <!--LLM Tools-->
+            <div class="col-md-2 mb-2 mb-md-0">
+              <h3>AI/ML Tools</h3>
+              <ul class="list-unstyled">
+                <li style="font-size: smaller;"><a href="{{ url_for('llm_tools.summarize') }}">Summarize (Video, PDF, URL)</a></li>
+                <!-- <li><a href="{{ url_for('llm_tools.image') }}">Color Palette</a></li> -->
               </ul>
             </div>
           </div>
