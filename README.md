@@ -19,6 +19,11 @@ git commit -m "removed pip freeze file"
 git push -u origin main
 ```
 
+## Create Virtuyal Environment
+```bash
+python -m venv env
+```
+
 ## Clone and run
 ```bash
 git clone https://github.com/fatih-keles/codeharmony.net.git
@@ -54,3 +59,48 @@ CONTAINERS='[{"imageUrl": "'$BUILD_TAG'", "command": [""], "arguments": ["", ""]
 # docker run --rm -it -p 5000:5000 $BUILD_TAG 
 # docker run --rm -d -p 5000:5000 $BUILD_TAG 
 ```
+
+# Datadog Installation on Ubuntu 22.04 Host
+## Install Agent
+```bash
+DD_API_KEY=<DATADOG_API_KEY> DD_SITE="datadoghq.eu" bash -c "$(curl -L https://s3.amazonaws.com/dd-agent/scripts/install_script_agent7.sh)"
+```
+
+## Remove Agent
+```bash
+sudo apt-get remove datadog-agent -y
+```
+
+## Change config
+```bash
+vi /etc/datadog-agent/datadog.yaml
+```
+## Check logs 
+```bash
+ls /var/log/datadog/
+```
+## Stop/start/status
+```bash
+systemctl stop datadog-agent
+datadog-agent status
+```
+
+## Cloud init script
+```bash
+#cloud-config
+users:
+ - default
+ - name: fkeles
+   sudo: ALL=(ALL) NOPASSWD:ALL
+   lock_passwd: false
+   passwd: $6$v1mRrj57$LzXO1IXC10zLZKl7fb8Byr/FHhqFodjSLq4f1DZTV5CkwGHB0Q0js3nUzLfFTtekgf/hDxvN9XVw/1Xk4dMvP1
+
+# run commands
+# default: none
+runcmd:
+ - export DD_API_KEY=776d55c273e533a32b03cd6105463b99
+ - export DD_SITE="datadoghq.eu"
+ - bash -c "$(curl -L https://s3.amazonaws.com/dd-agent/scripts/install_script_agent7.sh)"
+```
+
+746VSM6W

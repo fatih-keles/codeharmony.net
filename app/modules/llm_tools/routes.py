@@ -12,6 +12,7 @@ import langchain
 
 from langchain.chains.summarize import load_summarize_chain
 from langchain_openai import ChatOpenAI
+from langchain_community.llms import OCIGenAI
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain.callbacks import get_openai_callback
 from langchain_community.callbacks.openai_info import OpenAICallbackHandler
@@ -36,11 +37,11 @@ import random
 import string
 
 MAX_TOKENS=3900
-MODEL="gpt-3.5-turbo"
+DEFAULT_MODEL="gpt-3.5-turbo"
 MAX_PAGES=10
 
 # Count number of tokens
-def count_tokens(text, model=MODEL):
+def count_tokens(text, model=DEFAULT_MODEL):
     encoding = tiktoken.encoding_for_model(model)
     return len(encoding.encode(text))
 
@@ -88,6 +89,10 @@ class MyLLMTokenCallbackHandler(OpenAICallbackHandler):
         print(response)
         print(kwargs)
         print("-"*50)
+        
+    # def on_llm_new_token(self, token: str, **kwargs: Any) -> None:
+    #     """Print out the token."""
+    #     stream_token(f"{token}")
 
 class MyChainCallbackHandler(StreamingStdOutCallbackHandler):
     start_streaming: bool = False
@@ -248,26 +253,46 @@ def get_random_string(length):
     #print("Random string of length", length, "is:", result_str)
     return result_str
 
-# tmp_png_path = get_random_string(16)+".png"
-# try:
-#     print(tmp_png_path)
-#     hti = Html2Image()
-#     hti.screenshot(url=input_url, save_as=tmp_png_path)
-#     img_data = []
-#     with open(tmp_png_path, "rb") as image_file:
-#         img_data = image_file.read()
-#     print(len(img_data))
-# except Exception as e:
-#     print(f"Error: {e}")
-
-# with tempfile.NamedTemporaryFile(delete=True) as temp_img_file:
-#     print(os.path.basename(temp_img_file.name))
-#     hti = Html2Image(temp_path=tempfile.gettempdir())
-#     hti.screenshot(url=input_url, save_as=os.path.basename(temp_img_file.name))
-#     img_data = []
-#     with open(temp_img_file.name, "rb") as image_file:
-#         img_data = temp_img_file.read()
-#     print(len(img_data))
+def get_llm(llm_type="ocigenai"):
+    llm = None
+    lcb = MyLLMTokenCallbackHandler()
+    
+    stream_log(f"Creating LLM of type : {llm_type}", 2)
+    
+    if llm_type == "openai":
+        temperature=0
+        model_name="gpt-3.5-turbo"
+        
+        stream_log(f"Using OpenAI", 2)
+        stream_log(f"temperature: {temperature}", 2)
+        stream_log(f"model_name: {model_name}", 2)
+        stream_log("Attaching OpenAICallbackHandler to track token stats", 2)
+        llm = ChatOpenAI (
+            api_key=os.environ.get('OAK'),
+            temperature=temperature, 
+            model_name=model_name, 
+            streaming=True,
+            callbacks=[lcb]
+        )
+    elif llm_type == "ocigenai":
+        stream_log(f"Using OCI GenAI", 2)
+        model_id="cohere.command"
+        
+        stream_log(f"model_id: {model_id}", 2)
+        stream_log("Attaching OpenAICallbackHandler to track token stats", 2)
+        compartment_id = os.environ.get('COMPARTMENT_ID')
+        llm = OCIGenAI (
+            model_id = model_id,
+            service_endpoint = "https://inference.generativeai.us-chicago-1.oci.oraclecloud.com",
+            compartment_id = compartment_id,
+            model_kwargs = {"max_tokens":MAX_TOKENS},
+            is_stream = True,
+            verbose = False,
+            # callbacks = [lcb]
+        )
+    else:
+        llm = None
+    return llm
 
 @llm_tools_bp.route('/summarize/get-summarized-text', methods=['POST'])
 def get_summarized_text(language='en'):
@@ -327,11 +352,11 @@ def get_summarized_text(language='en'):
         # Count tokens and split the text to ensure chunks will fit in context
         stream_log("Counting tokens and splitting the text to ensure chunks will fit in context", 0)
         n_token = count_tokens(transcript_text)
-        stream_log(f"Counted {n_token} token(s) while allowed model({MODEL}) context window is {MAX_TOKENS}", 0)
+        stream_log(f"Counted {n_token} token(s) while allowed model({DEFAULT_MODEL}) context window is {MAX_TOKENS}", 0)
         
         if n_token >= MAX_TOKENS:
             stream_log("<y>Warning</y>: Token count will not fit in context, it will be splitted into chunks", 2)
-            splitter=langchain.text_splitter.RecursiveCharacterTextSplitter.from_tiktoken_encoder(model_name=MODEL)
+            splitter=langchain.text_splitter.RecursiveCharacterTextSplitter.from_tiktoken_encoder(model_name=DEFAULT_MODEL)
             chunks=splitter.split_text(transcript_text)
             stream_log(f"Total {str(n_token)} tokens will be splitted into {str(len(chunks))} chunks", 2)
             
@@ -427,34 +452,19 @@ def get_summarized_text(language='en'):
     summary = ""
     
     stream_log("Creating an LLM instance", 0)
-    temperature=0
-    stream_log(f"temperature: {temperature}", 2)
-    stream_log(f"model_name: {MODEL}", 2)
-    stream_log("Attaching OpenAICallbackHandler to track token stats", 2)
-    lcb = MyLLMTokenCallbackHandler()
-    llm = ChatOpenAI (
-        api_key=os.environ.get('OAK'),
-        temperature=temperature, 
-        model_name=MODEL, 
-        streaming=True,
-        callbacks=[lcb]
-    )
+    llm_type = "openai"
+    llm = get_llm(llm_type=llm_type)
         
     # Create a map reduce chain from chunks
     stream_log("Creating a map reduce chain", 0)
-    chain = load_summarize_chain(llm, chain_type="map_reduce", verbose=False, 
-            #  callbacks = [MyCustomCallbackHandler()]
-    )
-    # chain.callbacks = [MyCustomCallbackHandler()]
+    chain = load_summarize_chain(llm, chain_type="map_reduce", verbose=False, )
     if len(docs) > MAX_PAGES:
         stream_log(f"<r>Limiting the number of pages to {MAX_PAGES}</r>", 0)
             
     stream_log("Running the chain", 0)
-    stream_log("Attaching MyCustomCallbackHandler to stream results to client over socket.io", 2)
-    stream_log("Attaching MyCustomCallbackHandler to track token stats", 2)
-    ccb = MyChainCallbackHandler()
-    summary = chain.run(docs[:MAX_PAGES], callbacks=[ccb])
-    
+    stream_log("Attaching MyChainCallbackHandler to stream results to client over socket.io", 2)
+    stream_log("Attaching MyChainCallbackHandler to track token stats", 2)
+    summary = chain.run(docs[:MAX_PAGES], callbacks = [MyChainCallbackHandler()])
     
     stream_log(f"<g>Completed</g>: {summary}", 0)
     json_response["summary"] = summary

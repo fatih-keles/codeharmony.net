@@ -58,3 +58,7 @@ app.register_blueprint(llm_tools_bp)
 llm_tools_bp.stream_log = stream_log
 llm_tools_bp.stream_output = stream_output
 llm_tools_bp.stream_token = stream_token
+
+# Import and register the video_tools blueprint
+from app.modules.video_tools.routes import video_tools_bp
+app.register_blueprint(video_tools_bp)

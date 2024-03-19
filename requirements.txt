@@ -25,3 +25,4 @@ pypdf==4.0.2
 bs4==0.0.2
 html2text==2024.2.25
 html2image==2.0.4.3
+pytube==15.0.0

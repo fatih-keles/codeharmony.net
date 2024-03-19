@@ -109,7 +109,6 @@
               <li><a class="" href="{{ url_for('split_pdf.index') }}">Split PDF</a></li>
               <li><a class="" href="{{ url_for('watermark_pdf.index') }}">Watermark PDF</a></li>
               <li><a href="{{ url_for('extract_image_pdf.index') }}">Extract Images</a></li>
-              <li><a href="{{ url_for('under_the_hood') }}">Under the Hood</a></li>
               <!-- <li><a href="#">Extract Text</a></li>
               <li><a href="#">Re-arrange Pages (Copy/Delete/Re-order)</a></li>
               <li><a href="https://pymupdf.readthedocs.io/en/latest/the-basics.html">Encryption</a></li> -->
@@ -122,7 +121,6 @@
             <ul>
               <li><a href="{{ url_for('image_tools.fractal') }}">Fractals</a></li>
               <li><a href="{{ url_for('image_tools.image') }}">Color Palette</a></li>
-              <li><a href="{{ url_for('under_the_hood') }}">Under the Hood</a></li>
               <!-- <li><a class="" href="{{ url_for('split_pdf.index') }}">Split PDF</a></li>
               <li><a class="" href="{{ url_for('watermark_pdf.index') }}">Watermark PDF</a></li>
               <li><a href="{{ url_for('extract_image_pdf.index') }}">Extract Images</a></li>
@@ -141,6 +139,14 @@
             </ul>
           </li>
           <!--Dropdown Menu for LLM Tools:End-->
+
+          <!--Dropdown Menu for Video Tools-->
+          <li class="dropdown"><a href="#"><span>Video Tools</span> <i class="bi bi-chevron-down"></i></a>
+            <ul>
+              <li><a href="{{ url_for('video_tools.download') }}">Download YouTube Video</a></li>
+            </ul>
+          </li>
+          <!--Dropdown Menu for Video Tools:End-->
 
           <li><a href="https://oci-daily.blogspot.com/">Blog</a></li>
           <li><a href="https://www.linkedin.com/in/fatihkeles/">Contact</a></li>
@@ -220,8 +226,7 @@
               <h3>Navigation</h3>
               <ul class="list-unstyled">
                 <li><a href="{{ url_for('index') }}">Home</a></li>
-                <!-- <li><a href="{{ url_for('merge_pdf.index') }}">Merge PDFs</a></li>
-                <li><a href="{{ url_for('split_pdf.index') }}">Split PDF</a></li> -->
+                <li><a href="{{ url_for('under_the_hood') }}">Under the Hood</a></li>
                 <li><a href="https://oci-daily.blogspot.com/" target="_blank">Blog</a></li>
                 <li><a href="https://www.linkedin.com/in/fatihkeles/" target="_blank">Contact</a></li>
               </ul>
@@ -234,7 +239,7 @@
                 <li><a href="{{ url_for('split_pdf.index') }}">Split PDF</a></li>
                 <li><a href="{{ url_for('watermark_pdf.index') }}">Watermark PDF</a></li>
                 <li><a href="{{ url_for('extract_image_pdf.index') }}">Extract Images</a></li>
-                <li><a href="{{ url_for('under_the_hood') }}">Under the Hood</a></li>
+                <!-- <li><a href="{{ url_for('under_the_hood') }}">Under the Hood</a></li> -->
               </ul>
             </div>
             <!--Image Tools-->
@@ -250,6 +255,14 @@
               <h3>AI/ML Tools</h3>
               <ul class="list-unstyled">
                 <li style="font-size: smaller;"><a href="{{ url_for('llm_tools.summarize') }}">Summarize (Video, PDF, URL)</a></li>
+                <!-- <li><a href="{{ url_for('llm_tools.image') }}">Color Palette</a></li> -->
+              </ul>
+            </div>
+            <!--Video Tools-->
+            <div class="col-md-2 mb-2 mb-md-0">
+              <h3>Video Tools</h3>
+              <ul class="list-unstyled">
+                <li style="font-size: smaller;"><a href="{{ url_for('video_tools.download') }}">Download YouTube Video</a></li>
                 <!-- <li><a href="{{ url_for('llm_tools.image') }}">Color Palette</a></li> -->
               </ul>
             </div>

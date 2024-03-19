@@ -10,6 +10,7 @@ COPY . /app
 
 RUN apt-get update \
     && apt-get install -y wget \
+    && apt-get install -y curl \
     && apt-get -y install chromium \ 
     && apt-get clean
 
